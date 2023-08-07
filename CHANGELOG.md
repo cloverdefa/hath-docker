@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/cloverdefa/hath-docker/compare/v1.0.3...v1.0.4) (2023-08-07)
+
+
+### Docs
+
+* add new section for Docker in README.md ([93a439e](https://github.com/cloverdefa/hath-docker/commit/93a439e42fcec74b6fd790c91c4e5b66e53bd82a))
+
 ## [1.0.3](https://github.com/cloverdefa/hath-docker/compare/v1.0.2...v1.0.3) (2023-08-07)
 
 
