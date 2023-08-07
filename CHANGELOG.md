@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/cloverdefa/hath-docker/compare/v1.0.10...v1.0.11) (2023-08-07)
+
+
+### Build System
+
+* update base image and package installation for Alpine ([80c7abe](https://github.com/cloverdefa/hath-docker/commit/80c7abe5fd45d1876bd9607bacc0e929ece0687e))
+
 ## [1.0.10](https://github.com/cloverdefa/hath-docker/compare/v1.0.9...v1.0.10) (2023-08-07)
 
 
