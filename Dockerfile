@@ -15,7 +15,7 @@ ADD src/* /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
-HEALTHCHECK --interval=30s --timeout=3s  --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --retries=5 \
     CMD curl -fs http://localhost/ || exit 1
 
 CMD ["/opt/hath/start.sh"]
