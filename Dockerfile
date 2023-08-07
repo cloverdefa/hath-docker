@@ -1,7 +1,7 @@
-FROM openjdk11:alpine
+FROM openjdk:22-bookworm
 LABEL MAINTAINER="cloverdefa"
 
-RUN apk update && apk add wget unzip && \
+RUN apt-get update && apt-get install wget unzip -y && \
     mkdir -p /opt/hath && \
     wget -O /tmp/hath-1.6.1.zip https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip && \
     unzip /tmp/hath-1.6.1.zip -d /opt/hath && \
