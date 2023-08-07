@@ -28,23 +28,22 @@ or Use docker-compose
 ```
 version: "3.8"    
     
-services:    
-    
-hath:    
-  image: cloverdefa/hath    
-  container_name: hath    
-  user: "${UID}:${GID}"    
-  network_mode: host    
-  volumes:    
-    - ./cache:/hath/cache    
-    - ./data:/hath/data    
-    - ./download:/hath/download    
-    - ./log:/hath/log    
-    - ./tmp:/hath/tmp    
-  environment:    
-    - HATH_CLIENT_ID: <Input Your HATH ID Here>    
-    - HATH_CLIENT_KEY: <Input Your HATH KEY Here>    
-    - UMASK: 000    
-    - TZ: <Your TimeZone>    
-  restart: unless-stopped    
+services:        
+  hath:    
+    image: cloverdefa/hath    
+    container_name: hath    
+    user: "${UID}:${GID}"    
+    network_mode: host    
+    volumes:    
+      - ./cache:/hath/cache    
+      - ./data:/hath/data    
+      - ./download:/hath/download    
+      - ./log:/hath/log    
+      - ./tmp:/hath/tmp    
+    environment:    
+      - HATH_CLIENT_ID: <Input Your HATH ID Here>    
+      - HATH_CLIENT_KEY: <Input Your HATH KEY Here>    
+      - UMASK: 000    
+      - TZ: <Your TimeZone>    
+    restart: unless-stopped    
 ```
