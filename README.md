@@ -2,6 +2,7 @@
     
 ## Usage    
    
+## docker  
 ```
 docker run \   
 --name hath \    
@@ -15,7 +16,7 @@ docker run \
 -e HATH_CLIENT_KEY=<Input Your HATH KEY Here> \    
 -e UMASK=000 \    
 -e TZ=<YOUR_TIMEZONE> \   
--p YOUR_HATH_PORT/tcp \   
+-p <YOUR_HATH_PORT>/tcp \   
 cloverdefa/hath   
 ```
 
