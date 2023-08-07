@@ -1,4 +1,4 @@
-FROM 22-slim
+FROM buildpack-deps:bookworm-scm
 LABEL MAINTAINER="cloverdefa"
 
 RUN apt-get update && apt-get install wget unzip -y && \
