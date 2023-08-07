@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/cloverdefa/hath-docker/compare/v1.0.0...v1.0.1) (2023-08-07)
+
+
+### Docs
+
+* update README.md with instructions and usage examples ([63a831d](https://github.com/cloverdefa/hath-docker/commit/63a831d04b662babb7b614cf47ab16808bde1411))
+
 ## 1.0.0 (2023-08-07)
 
 
