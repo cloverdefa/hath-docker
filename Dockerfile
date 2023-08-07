@@ -1,4 +1,4 @@
-FROM openjdk:22-bookworm
+FROM 22-slim
 LABEL MAINTAINER="cloverdefa"
 
 RUN apt-get update && apt-get install wget unzip -y && \
