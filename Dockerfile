@@ -1,8 +1,6 @@
 FROM openjdk:alpine
 LABEL MAINTAINER="cloverdefa"
 
-ARG ARCH
-
 RUN apk update && apk add wget unzip && \
     mkdir -p /opt/hath && \
     wget -O /tmp/hath-1.6.1.zip https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip && \
