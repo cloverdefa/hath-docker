@@ -15,4 +15,4 @@ ADD src/* /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
-CMD ["/opt/hath/start.sh"]
+CMD ["/opt/hath/hath-start.sh"]
