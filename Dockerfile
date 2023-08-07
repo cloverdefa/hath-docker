@@ -6,7 +6,7 @@ RUN apk update && apk add wget unzip -y && \
     wget -O /tmp/hath-1.6.1.zip https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip && \
     unzip /tmp/hath-1.6.1.zip -d /opt/hath && rm /tmp/hath-1.6.1.zip
 
-HEALTHCHECK --interval=60s --timeout=5s \
+HEALTHCHECK --interval=600s --timeout=5s \
   CMD curl -fs http://localhost/ || exit 1
 
 ADD run/* /opt/hath/
