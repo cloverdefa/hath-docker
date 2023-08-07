@@ -23,7 +23,7 @@ cloverdefa/hath:latest
     
 or Use docker-compose    
     
-## docker-compose.yml
+## docker-compose
 
 ```
 version: "3.8"
