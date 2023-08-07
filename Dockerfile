@@ -3,7 +3,7 @@ LABEL MAINTAINER="cloverdefa"
 
 ARG ARCH
 
-RUN apk --no-cache --update && apk add wget unzip -y && \
+RUN apk update && apk add wget unzip && \
     mkdir -p /opt/hath && \
     wget -O /tmp/hath-1.6.1.zip https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip && \
     ls -l /tmp && \
