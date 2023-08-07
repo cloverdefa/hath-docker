@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.8](https://github.com/cloverdefa/hath-docker/compare/v1.0.7...v1.0.8) (2023-08-07)
+
+
+### Build System
+
+* add files from the "src" directory and update file paths ([ebadd84](https://github.com/cloverdefa/hath-docker/commit/ebadd84d304b21867caf019f56c8ac63485e36b3))
+* refactor Dockerfile to improve file copying ([1bbf86f](https://github.com/cloverdefa/hath-docker/commit/1bbf86f0b97c18ff77850afa6586869b0c0ac26f))
+
 ## [1.0.7](https://github.com/cloverdefa/hath-docker/compare/v1.0.6...v1.0.7) (2023-08-07)
 
 
