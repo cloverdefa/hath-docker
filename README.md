@@ -1,7 +1,7 @@
 # hath-docker    
     
 Usage    
-    
+<code> 
 docker run    
 --name hath    
 --user 99:100    
@@ -16,11 +16,12 @@ docker run
 -e TZ=YOUR_TIMEZONE    
 -p YOUR_HATH_PORT/tcp    
 cloverdefa/hath    
+<code>
     
 or Use docker-compose    
     
 # docker-compose.yml    
-    
+<code>  
 version: "3.8"    
     
 services:    
@@ -42,3 +43,4 @@ hath:
     - UMASK: 000    
     - TZ: <Your TimeZone>    
   restart: unless-stopped    
+<code>
