@@ -6,7 +6,7 @@ RUN apk update && apk add wget unzip -y && \
     wget -O /tmp/hath-1.6.1.zip https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip && \
     unzip /tmp/hath-1.6.1.zip -d /opt/hath && rm /tmp/hath-1.6.1.zip
 
-ADD run/* /opt/hath/
+ADD run/start.sh /opt/hath/start.sh
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
