@@ -1,9 +1,7 @@
-FROM openjdk:alpine
+FROM buildpack-deps:bookworm-scm
 LABEL MAINTAINER="cloverdefa"
 
-ARG ARCH
-
-RUN apk update && apk add wget unzip && \
+RUN apt-get update && apt-get install wget unzip -y && \
     mkdir -p /opt/hath && \
     wget -O /tmp/hath-1.6.1.zip https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip && \
     unzip /tmp/hath-1.6.1.zip -d /opt/hath && \
