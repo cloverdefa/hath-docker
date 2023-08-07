@@ -10,7 +10,7 @@ RUN apk update && apk add wget unzip && \
     rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar && \
     rm /tmp/hath-1.6.1.zip
 
-ADD run/* /opt/hath/
+COPY src/start.sh /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
