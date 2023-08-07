@@ -15,6 +15,4 @@ ADD start.sh /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
-WORKDIR /opt/hath
-
-CMD ["start.sh"]
+CMD ["/opt/hath/start.sh"]
