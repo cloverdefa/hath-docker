@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.10](https://github.com/cloverdefa/hath-docker/compare/v1.0.9...v1.0.10) (2023-08-07)
+
+
+### Build System
+
+* update base image in Dockerfile to openjdk11:alpine ([9b75c36](https://github.com/cloverdefa/hath-docker/commit/9b75c36f57fd109a8ac3cb726ceeacaa35e4b514))
+
 ## [1.0.9](https://github.com/cloverdefa/hath-docker/compare/v1.0.8...v1.0.9) (2023-08-07)
 
 
