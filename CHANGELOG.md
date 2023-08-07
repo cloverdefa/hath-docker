@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/cloverdefa/hath-docker/compare/v1.0.4...v1.0.5) (2023-08-07)
+
+
+### Styling
+
+* remove extra whitespace in the README.md file ([a1d3605](https://github.com/cloverdefa/hath-docker/commit/a1d36050c4f338b5d234cec7be3766bbb7b99ed5))
+
 ## [1.0.4](https://github.com/cloverdefa/hath-docker/compare/v1.0.3...v1.0.4) (2023-08-07)
 
 
