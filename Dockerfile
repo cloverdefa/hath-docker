@@ -1,5 +1,5 @@
-From openjdk:alpine
-MAINTAINER cloverdefa
+FROM openjdk:alpine
+LABEL MAINTAINER cloverdefa
 
 RUN apk update && apk add wget unzip -y && \
     mkdir -p /opt/hath && \
