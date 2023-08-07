@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/cloverdefa/hath-docker/compare/v1.0.8...v1.0.9) (2023-08-07)
+
+
+### Build System
+
+* increase timeout and retries for healthcheck command in Dockerfile ([7aa8653](https://github.com/cloverdefa/hath-docker/commit/7aa865352dc16f40e8ae5fe4b9fc3c5839bf3a74))
+
 ## [1.0.8](https://github.com/cloverdefa/hath-docker/compare/v1.0.7...v1.0.8) (2023-08-07)
 
 
