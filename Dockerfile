@@ -1,7 +1,5 @@
-FROM openjdk:alpine
+FROM openjdk11:alpine
 LABEL MAINTAINER="cloverdefa"
-
-ARG ARCH
 
 RUN apk update && apk add wget unzip && \
     mkdir -p /opt/hath && \
