@@ -2,7 +2,7 @@
     
 ## Usage    
    
-## docker  
+## Use docker  
 ```
 docker run \
 --name hath \
@@ -21,9 +21,9 @@ cloverdefa/hath:latest
 ```
 
     
-or Use docker-compose    
+## or Use docker-compose    
     
-## docker-compose
+### docker-compose.yml
 
 ```
 version: "3.8"
