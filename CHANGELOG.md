@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/cloverdefa/hath-docker/compare/v1.0.6...v1.0.7) (2023-08-07)
+
+
+### Docs
+
+* add Docker support for running H@H Client ([82410b7](https://github.com/cloverdefa/hath-docker/commit/82410b77b212dbcbd22bf11d9d7e91f7a1d81119))
+
 ## [1.0.6](https://github.com/cloverdefa/hath-docker/compare/v1.0.5...v1.0.6) (2023-08-07)
 
 
