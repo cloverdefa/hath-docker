@@ -11,8 +11,10 @@ RUN apk update && apk add wget unzip && \
     rm /opt/hath/HentaiAtHomeGUI.jar && \
     rm /tmp/hath-1.6.1.zip
 
-COPY src/start.sh /opt/hath/
+ADD start.sh /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
-CMD ["/opt/hath/start.sh"]
+WORKDIR /opt/hath
+
+CMD ["start.sh"]
