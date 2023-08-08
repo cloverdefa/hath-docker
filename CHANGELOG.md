@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.12](https://github.com/cloverdefa/hath-docker/compare/v1.0.11...v1.0.12) (2023-08-08)
+
+
+### Docs
+
+* add link to GitHub repository, improve user experience ([09b5f21](https://github.com/cloverdefa/hath-docker/commit/09b5f21b7c566acc13a4355a0623d45e9e38682c))
+
 ## [1.0.11](https://github.com/cloverdefa/hath-docker/compare/v1.0.10...v1.0.11) (2023-08-07)
 
 
