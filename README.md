@@ -15,7 +15,7 @@ Bookworm
 ```
 docker run \
 --name hath \
---user "${UID}:${GID} \
+--user <UID>:<GID> \
 -v /path/to/your/hath/cache:/hath/cache \
 -v /path/to/your/hath/data:/hath/data \ 
 -v /path/to/your/hath/download>:/hath/download \
@@ -41,7 +41,7 @@ services:
   hath:  
     image: cloverdefa/hath:latest
     container_name: 'hath'
-    user: "${UID}:${GID}"
+    user: '<UID>:<GID>'
     network_mode: host 
     volumes:
       - ./cache:/hath/cache
