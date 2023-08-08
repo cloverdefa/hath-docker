@@ -2,7 +2,7 @@ FROM openjdk:22-slim-bookworm
 LABEL MAINTAINER="cloverdefa"
 
 RUN apt-get update && apt-get upgrade -y \
-    && apt install -y wget unzip \
+    && apt install -y wget unzip curl \
     && mkdir -p /opt/hath \
     && wget -O /tmp/hath-1.6.1.zip \
     https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip \
