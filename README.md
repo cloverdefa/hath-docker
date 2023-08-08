@@ -10,12 +10,13 @@ JAVA : 22-ea+9
 Bookworm
    
 ## Usage  
+Run H@H Client on Docker  
    
 ## Use docker  
 ```
 docker run \
 --name hath \
---user <UID>:<GID> \
+--user <Input Your UID Here>:<Input Your GID Here> \
 -v /path/to/your/hath/cache:/hath/cache \
 -v /path/to/your/hath/data:/hath/data \ 
 -v /path/to/your/hath/download>:/hath/download \
@@ -41,7 +42,7 @@ services:
   hath:  
     image: cloverdefa/hath:latest
     container_name: 'hath'
-    user: '<UID>:<GID>'
+    user: '<Input Your UID Here>:<Input Your GID Here>'
     network_mode: host 
     volumes:
       - ./cache:/hath/cache
@@ -55,7 +56,6 @@ services:
       - UMASK: 000
       - TZ: <Input Your TimeZone Here>
     restart: unless-stopped
-```
    
 ## Docker Hub
 
