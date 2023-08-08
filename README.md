@@ -7,7 +7,7 @@ Run H@H Client on Docker
 ```
 docker run \
 --name hath \
---user 99:100 \
+--user "${UID}:${GID} \
 -v /path/to/your/hath/cache:/hath/cache \
 -v /path/to/your/hath/data:/hath/data \ 
 -v /path/to/your/hath/download>:/hath/download \
@@ -48,3 +48,7 @@ services:
       - TZ: <Input Your TimeZone Here>
     restart: unless-stopped
 ```
+   
+## Github
+
+https://github.com/cloverdefa/hath-docker
