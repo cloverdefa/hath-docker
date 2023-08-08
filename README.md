@@ -56,6 +56,6 @@ services:
     restart: unless-stopped
 ```
    
-## Github
+## Docker Hub
 
-https://github.com/cloverdefa/hath-docker
+https://hub.docker.com/r/cloverdefa/hath
