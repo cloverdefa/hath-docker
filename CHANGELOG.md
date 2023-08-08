@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/cloverdefa/hath-docker/compare/v1.0.14...v1.1.0) (2023-08-08)
+
+
+### Features
+
+* update healthcheck URL to e-hentai.org ([cd4f069](https://github.com/cloverdefa/hath-docker/commit/cd4f069ad4dbe5577700c64e52a1cf0b9fa4b3fd))
+
 ## [1.0.14](https://github.com/cloverdefa/hath-docker/compare/v1.0.13...v1.0.14) (2023-08-08)
 
 
