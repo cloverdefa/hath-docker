@@ -1,4 +1,4 @@
-FROM openjdk:22-jdk-bookworm
+FROM openjdk:22-slim-bookworm
 LABEL MAINTAINER="cloverdefa"
 
 RUN apt-get update && apt-get upgrade -y \
