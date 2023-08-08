@@ -1,7 +1,7 @@
 FROM openjdk:22-jdk-bookworm
 LABEL MAINTAINER="cloverdefa"
 
-RUN apt update && apt upgrade \
+RUN apt-get update && apt-get upgrade -y \
     && apt install -y wget unzip \
     && mkdir -p /opt/hath \
     && wget -O /tmp/hath-1.6.1.zip \
