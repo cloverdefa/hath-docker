@@ -13,6 +13,9 @@ RUN apt-get update && apt-get upgrade -y \
 
 ADD src/* /opt/hath/
 
+HEALTHCHECK --interval=60s --start-period=180s --timeout=60s --retries=3 \
+  CMD curl -fs http://localhost/ || exit 1
+
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
 CMD ["/opt/hath/start.sh"]
