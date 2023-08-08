@@ -1,5 +1,14 @@
 # hath-docker    
     
+hath-docker   
+   
+This is a H@H Clinet run on Docker   
+   
+Version :   
+H@H Client : 1.6.1   
+JAVA : 22-ea+9   
+Bookworm
+   
 ## Usage  
 Run H@H Client on Docker  
    
@@ -7,7 +16,7 @@ Run H@H Client on Docker
 ```
 docker run \
 --name hath \
---user 99:100 \
+--user <Input Your UID Here>:<Input Your GID Here> \
 -v /path/to/your/hath/cache:/hath/cache \
 -v /path/to/your/hath/data:/hath/data \ 
 -v /path/to/your/hath/download>:/hath/download \
@@ -16,7 +25,7 @@ docker run \
 -e HATH_CLIENT_ID=<Input Your HATH ID Here> \
 -e HATH_CLIENT_KEY=<Input Your HATH KEY Here> \
 -e UMASK=000 \
--e TZ=<YOUR_TIMEZONE> \
+-e TZ=<Input YOUR_TIMEZONE Here> \
 -p <YOUR_HATH_PORT>/tcp \
 cloverdefa/hath:latest
 ```
@@ -33,8 +42,8 @@ services:
   hath:  
     image: cloverdefa/hath:latest
     container_name: 'hath'
-    user: "${UID}:${GID}"
-    network_mode: host 
+    user: '<Input Your UID Here>:<Input Your GID Here>'
+    network_mode: 'host'
     volumes:
       - ./cache:/hath/cache
       - ./data:/hath/data  
@@ -42,9 +51,12 @@ services:
       - ./log:/hath/log
       - ./tmp:/hath/tmp
     environment:
-      - HATH_CLIENT_ID: <Input Your HATH ID Here>
-      - HATH_CLIENT_KEY: <Input Your HATH KEY Here>
-      - UMASK: 000
-      - TZ: <Input Your TimeZone Here>
-    restart: unless-stopped
-```
+      HATH_CLIENT_ID: '<Input Your HATH ID Here>'
+      HATH_CLIENT_KEY: '<Input Your HATH KEY Here>'
+      UMASK: '000'
+      TZ: '<Input Your TimeZone Here>'
+    restart: 'unless-stopped'
+   
+## Docker Hub
+
+https://hub.docker.com/r/cloverdefa/hath
