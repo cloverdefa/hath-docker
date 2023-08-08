@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.14](https://github.com/cloverdefa/hath-docker/compare/v1.0.13...v1.0.14) (2023-08-08)
+
+
+### Build System
+
+* update base image and package manager for Hath installation ([2c680d7](https://github.com/cloverdefa/hath-docker/commit/2c680d7c50318b35f9678476269e84852431f019))
+
 ## [1.0.13](https://github.com/cloverdefa/hath-docker/compare/v1.0.12...v1.0.13) (2023-08-08)
 
 
