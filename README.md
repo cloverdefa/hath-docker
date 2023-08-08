@@ -1,7 +1,14 @@
 # hath-docker    
     
+hath-docker   
+   
+This is a H@H Clinet run on Docker   
+   
+Version :   
+H@H Client : 1.6.1   
+JAVA : 8u171   
+   
 ## Usage  
-Run H@H Client on Docker  
    
 ## Use docker  
 ```
