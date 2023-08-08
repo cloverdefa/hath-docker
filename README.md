@@ -56,6 +56,7 @@ services:
       UMASK: '000'
       TZ: '<Input Your TimeZone Here>'
     restart: 'unless-stopped'
+```
    
 ## Docker Hub
 
