@@ -7,7 +7,7 @@ This is a H@H Clinet run on Docker
 Version :   
 H@H Client : 1.6.1   
 JAVA : openjdk-22-ea+9   
-Bookworm
+Bookworm-slim
    
 ## Usage  
 Run H@H Client on Docker  
