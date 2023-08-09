@@ -5,7 +5,7 @@ LABEL version=["0.0.4-beta"]
 WORKDIR /opt/hath 
 
 RUN ['apt-get update && apt-get upgrade -y \
-    && apt install -y unzip procps \
+    && apt install -y wget unzip procps \
     && wget -O /tmp/hath-1.6.1.zip \
     https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip \
     && unzip /tmp/hath-1.6.1.zip -d /opt/hath \
