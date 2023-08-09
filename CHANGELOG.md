@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/cloverdefa/hath-docker/compare/v1.1.1...v1.1.2) (2023-08-09)
+
+
+### Build System
+
+* update Dockerfile configuration ([085588e](https://github.com/cloverdefa/hath-docker/commit/085588ef136af370ac189732975735c95b64b71f))
+
 ## [1.1.1](https://github.com/cloverdefa/hath-docker/compare/v1.1.0...v1.1.1) (2023-08-09)
 
 
