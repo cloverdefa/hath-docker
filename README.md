@@ -10,9 +10,7 @@ JAVA : openjdk-build 22-ea+9-633
 Bookworm-slim
    
 ## Usage  
-Run H@H Client on Docker  
-   
-## Use docker  
+You can use the following command to run Docker:
 ```
 docker run \
 --name hath \
@@ -30,11 +28,7 @@ docker run \
 cloverdefa/hath:latest
 ```
 
-    
-## or Use docker-compose    
-    
-### docker-compose.yml
-
+Certainly! Here's an example of a docker-compose.yml file that you can use to run the H@H client program:   
 ```
 version: "3.8"
 
