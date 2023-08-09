@@ -1,6 +1,6 @@
 FROM openjdk:22-slim-bookworm
 LABEL MAINTAINER="cloverdefa"
-LABEL version="0.0.4"
+LABEL version="0.0.5"
 
 WORKDIR /opt/hath 
 
@@ -14,6 +14,9 @@ RUN apt-get update && apt-get upgrade -y \
     && rm /tmp/hath-1.6.1.zip
 
 ADD src/* /opt/hath/
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD jstack 1|grep 'HentaiAtHome'||exit
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
