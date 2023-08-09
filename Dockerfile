@@ -16,7 +16,7 @@ RUN apt-get update && apt-get upgrade -y \
 ADD src/* /opt/hath/
 
 HEALTHCHECK --interval=60s --start-period=180s --timeout=60s --retries=3 \
-  CMD ps aux | grep HentaiAtHome || exit(1)
+  CMD jps | grep 'HentaiAtHome.jar' || exit
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
