@@ -15,7 +15,7 @@ RUN ['apt-get update && apt-get upgrade -y \
 
 ADD src/* /opt/hath/
 
-ENV PATH /usr/bin:pa /usr/bin:ps
+ENV PATH /usr/bin:ps /usr/bin:ps
 
 HEALTHCHECK --interval=60s --start-period=180s --timeout=60s --retries=3 \
   CMD ps aux | grep HentaiAtHome || exit(1)
