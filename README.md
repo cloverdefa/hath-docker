@@ -1,8 +1,8 @@
 # hath-docker    
     
 hath-docker   
-   
-This is a H@H Clinet run on Docker   
+
+This is a H@H client program running on Docker.   
    
 Version :   
 H@H Client : 1.6.1   
