@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/cloverdefa/hath-docker/compare/v1.1.0...v1.1.1) (2023-08-09)
+
+
+### Build System
+
+* update Docker image and file structure ([f86c77a](https://github.com/cloverdefa/hath-docker/commit/f86c77a49077597ffa23ea30ef674c29406842d3))
+
 ## [1.1.0](https://github.com/cloverdefa/hath-docker/compare/v1.0.14...v1.1.0) (2023-08-08)
 
 
