@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/cloverdefa/hath-docker/compare/v1.1.4...v1.1.5) (2023-08-10)
+
+
+### Build System
+
+* update Dockerfile to use HATH_VERSION argument ([eefbc81](https://github.com/cloverdefa/hath-docker/commit/eefbc81d8e71e5ed11dc8be8f82d5aa49a9ea70a))
+
 ## [1.1.4](https://github.com/cloverdefa/hath-docker/compare/v1.1.3...v1.1.4) (2023-08-10)
 
 
