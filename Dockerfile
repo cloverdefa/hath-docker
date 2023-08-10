@@ -5,6 +5,8 @@ LABEL version=0.0.7-beta
 WORKDIR /opt/hath
 
 ARG HATH_VERSION=1.6.1
+ARG UID=1000
+ARG GID=1000
 
 RUN apt-get update && apt-get upgrade -y \
     && apt install -y wget unzip \
@@ -13,7 +15,11 @@ RUN apt-get update && apt-get upgrade -y \
     && unzip /tmp/hath-${HATH_VERSION}.zip -d /opt/hath \
     && rm /opt/hath/autostartgui.bat \
     && rm /opt/hath/HentaiAtHomeGUI.jar \
-    && rm /tmp/hath-${HATH_VERSION}.zip
+    && rm /tmp/hath-${HATH_VERSION}.zip \
+    && groupadd -g "${GID}" hath \
+    && useradd --create-home --no-log-init -u "${UID}" -g "${GID}" hath
+
+USER hath
 
 ADD src/* /opt/hath/
 
