@@ -1,6 +1,6 @@
 FROM openjdk:22-slim-bookworm
 LABEL MAINTAINER="cloverdefa"
-LABEL version="0.0.5"
+LABEL version="0.0.6-beta"
 
 WORKDIR /opt/hath
 
