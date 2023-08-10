@@ -4,6 +4,8 @@
 if [ "${UMASK:-UNSET}" != "UNSET" ]; then
   umask "$UMASK"
 fi
+# set UID & GID
+user = $(id -u ${USER}):$(id -g ${USER})
 
 # Create client_login if it doesn't exist yet
 if [ ! -f /hath/data/client_login ]; then
