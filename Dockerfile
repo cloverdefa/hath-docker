@@ -4,7 +4,7 @@ LABEL version=["0.0.6"]
 
 WORKDIR /opt/hath
 
-ARG ['HATH_VERSION=1.6.1']
+ARG HATH_VERSION=1.6.1
 
 RUN apt-get update && apt-get upgrade -y \
     && apt install -y wget unzip \
