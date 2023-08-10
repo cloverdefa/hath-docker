@@ -17,7 +17,7 @@ RUN apt-get update && apt-get upgrade -y \
 
 ADD src/* /opt/hath/
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
     CMD jstack 1|grep 'HentaiAtHome'||exit
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
