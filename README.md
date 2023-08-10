@@ -35,9 +35,10 @@ version: "3.8"
 services:
   hath:  
     image: cloverdefa/hath:latest
-    container_name: 'hath'
-    user: '<Input Your UID Here>:<Input Your GID Here>'
-    network_mode: 'host'
+    container_name: hath
+    user: <Input Your UID Here>:<Input Your GID Here>
+    network_mode: host
+    restart: unless-stopped
     volumes:
       - ./cache:/hath/cache
       - ./data:/hath/data  
@@ -45,11 +46,10 @@ services:
       - ./log:/hath/log
       - ./tmp:/hath/tmp
     environment:
-      HATH_CLIENT_ID: '<Input Your HATH ID Here>'
-      HATH_CLIENT_KEY: '<Input Your HATH KEY Here>'
-      UMASK: '000'
-      TZ: '<Input Your TimeZone Here>'
-    restart: 'unless-stopped'
+      HATH_CLIENT_ID: <Input Your HATH ID Here>
+      HATH_CLIENT_KEY: <Input Your HATH KEY Here>
+      UMASK: 000
+      TZ: <Input Your TimeZone Here>
 ```
    
 ## Docker Hub
