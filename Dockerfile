@@ -1,6 +1,6 @@
 FROM openjdk:22-slim-bookworm
 LABEL MAINTAINER=cloverdefa
-LABEL version=0.0.7-beta
+LABEL version=0.0.7
 
 ARG HATH_VERSION=1.6.1
 
