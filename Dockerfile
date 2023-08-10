@@ -7,6 +7,8 @@ WORKDIR /opt/hath
 ARG HATH_VERSION=1.6.1
 
 RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y unzip \
+    && unzip /opt/hath/HentaiAtHome_${HATH_VERSION}.zip \
     && rm /opt/hath/autostartgui.bat \
     && rm /opt/hath/HentaiAtHomeGUI.jar
 
