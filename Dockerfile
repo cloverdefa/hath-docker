@@ -5,6 +5,8 @@ LABEL version=0.0.7-beta
 WORKDIR /opt/hath
 
 ARG HATH_VERSION=1.6.1
+ARG UID=(id -u)
+ARG GID=(id -g)
 
 RUN apt-get update && apt-get upgrade -y \
     && apt install -y wget unzip \
