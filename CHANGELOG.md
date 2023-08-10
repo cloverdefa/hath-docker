@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/cloverdefa/hath-docker/compare/v1.1.3...v1.1.4) (2023-08-10)
+
+
+### Build System
+
+* update Dockerfile to use version 1.6.1 of HentaiAtHome ([78aaa76](https://github.com/cloverdefa/hath-docker/commit/78aaa7648189dda0c29c4d6930d06c097491d62a))
+
 ## [1.1.2](https://github.com/cloverdefa/hath-docker/compare/v1.1.1...v1.1.2) (2023-08-09)
 
 
