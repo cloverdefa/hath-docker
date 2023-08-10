@@ -2,16 +2,18 @@ FROM openjdk:22-slim-bookworm
 LABEL MAINTAINER="cloverdefa"
 LABEL version="0.0.5"
 
-WORKDIR /opt/hath 
+WORKDIR /opt/hath
+
+ARG HATH_VERSION=1.6.1
 
 RUN apt-get update && apt-get upgrade -y \
     && apt install -y wget unzip \
-    && wget -O /tmp/hath-1.6.1.zip \
-    https://repo.e-hentai.org/hath/HentaiAtHome_1.6.1.zip \
-    && unzip /tmp/hath-1.6.1.zip -d /opt/hath \
+    && wget -O /tmp/hath-${HATH_VERSION}.zip \
+    https://repo.e-hentai.org/hath/HentaiAtHome_${HATH_VERSION}.zip \
+    && unzip /tmp/hath-${HATH_VERSION}.zip -d /opt/hath \
     && rm /opt/hath/autostartgui.bat \
     && rm /opt/hath/HentaiAtHomeGUI.jar \
-    && rm /tmp/hath-1.6.1.zip
+    && rm /tmp/hath-${HATH_VERSION}.zip
 
 ADD src/* /opt/hath/
 
