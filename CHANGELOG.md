@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.7](https://github.com/cloverdefa/hath-docker/compare/v1.1.6...v1.1.7) (2023-08-10)
+
+
+### Code Refactoring
+
+* refactor user identification and remove unnecessary lines ([07242ba](https://github.com/cloverdefa/hath-docker/commit/07242ba8d12e870bd297557a05f3c02af41f3643))
+* refactor variable names and add comments for user ID and group ID ([4359c63](https://github.com/cloverdefa/hath-docker/commit/4359c6305287b56f15f61ebf3af33b4d75cdb59b))
+* remove unused variables and update USER argument ([97f25a9](https://github.com/cloverdefa/hath-docker/commit/97f25a9a24d3935d2812c4d2fa0636d56431f552))
+
+
+### Build System
+
+* refactor Dockerfile and file structure ([88597d2](https://github.com/cloverdefa/hath-docker/commit/88597d242b8b3f5b75aed957f84cc37c901afdbd))
+* update Dockerfile to include necessary packages and remove unnecessary files ([13a6859](https://github.com/cloverdefa/hath-docker/commit/13a6859da30f57732e09b1656b0b109c70bc294f))
+
 ## [1.1.5](https://github.com/cloverdefa/hath-docker/compare/v1.1.4...v1.1.5) (2023-08-10)
 
 
