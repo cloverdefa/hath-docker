@@ -1,17 +1,5 @@
 # Changelog
 
-## [1.1.3](https://github.com/cloverdefa/hath-docker/compare/v1.1.2...v1.1.3) (2023-08-09)
-
-
-### Styling
-
-* remove unnecessary semicolon after CMD command ([19a6e45](https://github.com/cloverdefa/hath-docker/commit/19a6e45fcf6e84a979b3295b0f279bce3b3bac17))
-
-
-### Build System
-
-* add health check command and volumes to Dockerfile ([4df8863](https://github.com/cloverdefa/hath-docker/commit/4df8863a94cfd04f8bea3965dcb88d09fcefbef8))
-
 ## [1.1.2](https://github.com/cloverdefa/hath-docker/compare/v1.1.1...v1.1.2) (2023-08-09)
 
 
