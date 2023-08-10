@@ -6,9 +6,8 @@ if [ "${UMASK:-UNSET}" != "UNSET" ]; then
 fi
 
 # set User ID & Group ID
-UID = (id -u)
-GID = (id -g)
-USER = ${UID}:${GID}
+UID =(id -u)
+GID =(id -g)
 
 # Create client_login if it doesn't exist yet
 if [ ! -f /hath/data/client_login ]; then
