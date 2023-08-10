@@ -15,7 +15,8 @@ RUN apt-get update && apt-get upgrade -y \
     && unzip /opt/hath/HentaiAtHome_${HATH_VERSION}.zip \
     && rm /opt/hath/autostartgui.bat \
     && rm /opt/hath/HentaiAtHomeGUI.jar \
-    && rm /opt/hath/HentaiAtHome_${HATH_VERSION}.zip
+    && rm /opt/hath/HentaiAtHome_${HATH_VERSION}.zip \
+    && apt-get remove -y unzip
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
     CMD jstack 1|grep 'HentaiAtHome'||exit
