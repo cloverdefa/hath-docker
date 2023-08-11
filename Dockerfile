@@ -1,6 +1,6 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jre-alpine
 LABEL MAINTAINER=cloverdefa
-LABEL VERSION=0.0.8
+LABEL VERSION=0.0.9
 
 ARG HATH_VERSION=1.6.1
 
