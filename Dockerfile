@@ -11,7 +11,7 @@ ARG HATH_VERSION=1.6.1
 
 WORKDIR /opt/hath
 
-ADD src/* /opt/hath/
+COPY start.sh /opt/hath/
 
 RUN apk add --no-cache --update --virtual build-hath wget unzip \
     && wget -O /tmp/hath-$HATH_VERSION.zip \
