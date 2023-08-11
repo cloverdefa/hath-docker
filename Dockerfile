@@ -1,6 +1,11 @@
-FROM alpine:3.18.3
+FROM openjdk:8-jdk-alpine
 LABEL MAINTAINER=cloverdefa
 LABEL VERSION=0.0.8-beta
+
+RUN apk add --no-cache --update \
+    ca-certificates \
+    tzdata \
+ && update-ca-certificates
 
 ARG HATH_VERSION=1.6.1
 
@@ -8,12 +13,8 @@ WORKDIR /opt/hath
 
 ADD src/* /opt/hath/
 
-RUN apk update && apk upgrade \
-    && apk add ca-certificates \
-    && update-ca-certificates \
-    && apk add openjdk11 \
-    && apk add --no-cache --virtual build-hath wget unzip \
-    wget -o /tmp/hath-${HATH_VERSION}.zip \
+RUN apk add --no-cache --virtual build-hath wget unzip \
+    wget -O /tmp/hath-$HATH_VERSION.zip \
     https://repo.e-hentai.org/hath/HentaiAtHome_${HATH_VERSION}.zip \
     && unzip /tmp/hath/HentaiAtHome_${HATH_VERSION}.zip -d /opt/hath \
     && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
