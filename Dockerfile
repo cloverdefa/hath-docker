@@ -16,9 +16,6 @@ RUN apk add --no-cache --update --virtual build-hath wget unzip \
     && rm /tmp/hath-$HATH_VERSION.zip \
     && apk del build-hath
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
-    CMD jstack 1|grep 'HentaiAtHome'||exit
-
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
 CMD ["/opt/hath/start.sh"]
