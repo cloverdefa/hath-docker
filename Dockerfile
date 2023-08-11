@@ -1,21 +1,25 @@
-FROM openjdk:22-slim-bookworm
+FROM openjdk:8-jdk-alpine
 LABEL MAINTAINER=cloverdefa
-LABEL VERSION=0.0.7
+LABEL VERSION=0.0.8
+
+RUN apk add --no-cache --update \
+    ca-certificates \
+    tzdata \
+    && update-ca-certificates
 
 ARG HATH_VERSION=1.6.1
 
 WORKDIR /opt/hath
 
-ADD src/* /opt/hath/
-ADD https://repo.e-hentai.org/hath/HentaiAtHome_${HATH_VERSION}.zip \
-    /opt/hath
+COPY start.sh /opt/hath/
 
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y unzip \
-    && unzip /opt/hath/HentaiAtHome_${HATH_VERSION}.zip \
-    && rm /opt/hath/autostartgui.bat \
-    HentaiAtHomeGUI.jar HentaiAtHome_${HATH_VERSION}.zip \
-    && apt-get remove -y unzip
+RUN apk add --no-cache --update --virtual build-hath wget unzip \
+    && wget -O /tmp/hath-$HATH_VERSION.zip \
+    https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
+    && unzip /tmp/hath-$HATH_VERSION.zip -d /opt/hath \
+    && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
+    && rm /tmp/hath-$HATH_VERSION.zip \
+    && apk del build-hath
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
     CMD jstack 1|grep 'HentaiAtHome'||exit
