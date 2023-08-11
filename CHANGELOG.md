@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.11](https://github.com/cloverdefa/hath-docker/compare/v1.1.10...v1.1.11) (2023-08-11)
+
+
+### Docs
+
+* fix typo in `RUN` command ([233ccbc](https://github.com/cloverdefa/hath-docker/commit/233ccbc3d60876d55c5b543b3f41b0e643a484df))
+
 ## [1.1.10](https://github.com/cloverdefa/hath-docker/compare/v1.1.9...v1.1.10) (2023-08-11)
 
 
