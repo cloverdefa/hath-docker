@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 LABEL MAINTAINER=cloverdefa
-LABEL VERSION=0.0.8-beta
+LABEL VERSION=0.0.8
 
 RUN apk add --no-cache --update \
     ca-certificates \
