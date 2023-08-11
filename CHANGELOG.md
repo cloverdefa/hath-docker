@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.9](https://github.com/cloverdefa/hath-docker/compare/v1.1.8...v1.1.9) (2023-08-11)
+
+
+### Build System
+
+* refactor Dockerfile to remove unnecessary packages ([b3dda2d](https://github.com/cloverdefa/hath-docker/commit/b3dda2d6024fe88abbf737509cb07365a00f4fec))
+
 ## [1.1.8](https://github.com/cloverdefa/hath-docker/compare/v1.1.7...v1.1.8) (2023-08-11)
 
 
