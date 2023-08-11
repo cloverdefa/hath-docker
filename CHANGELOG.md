@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.8](https://github.com/cloverdefa/hath-docker/compare/v1.1.7...v1.1.8) (2023-08-11)
+
+
+### Build System
+
+* update base image and packages ([0527dd5](https://github.com/cloverdefa/hath-docker/commit/0527dd58379ffb88f85973547f72ddd8a3241d33))
+* update base image to Alpine 3.18.3 and improve package management ([af77276](https://github.com/cloverdefa/hath-docker/commit/af7727683670c40ef6442fc711667bc484570c92))
+* update Dockerfile and start.sh ([b24dcc5](https://github.com/cloverdefa/hath-docker/commit/b24dcc53b53ef5a650dd071e101ec1ae39b70a0b))
+
 ## [1.1.7](https://github.com/cloverdefa/hath-docker/compare/v1.1.6...v1.1.7) (2023-08-10)
 
 
