@@ -8,8 +8,7 @@ WORKDIR /opt/hath
 
 COPY start.sh /opt/hath/
 
-RUN apk update --na-cache && apk upgrade \
-    && apk add --no-cache --update --virtual build-hath wget unzip \
+RUN apk add --no-cache --update --virtual build-hath wget unzip \
     && wget -O /tmp/hath-$HATH_VERSION.zip \
     https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
     && unzip /tmp/hath-$HATH_VERSION.zip -d /opt/hath \
