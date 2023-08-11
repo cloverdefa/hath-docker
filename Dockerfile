@@ -18,7 +18,7 @@ RUN apk add --no-cache --update --virtual build-hath wget unzip \
     https://repo.e-hentai.org/hath/HentaiAtHome_${HATH_VERSION}.zip \
     && unzip /tmp/hath-${HATH_VERSION}.zip -d /opt/hath \
     && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
-    && rm /tmp/HentaiAtHome_${HATH_VERSION}.zip \
+    && rm /tmp/hath-${HATH_VERSION}.zip \
     && apk del build-hath
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
