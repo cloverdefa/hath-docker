@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.10](https://github.com/cloverdefa/hath-docker/compare/v1.1.9...v1.1.10) (2023-08-11)
+
+
+### Build System
+
+* update base image to `openjdk:8-jre-alpine` ([8d2ff4a](https://github.com/cloverdefa/hath-docker/commit/8d2ff4a6c86a77ab47be63cb5ecbbc6186aa7826))
+
 ## [1.1.9](https://github.com/cloverdefa/hath-docker/compare/v1.1.8...v1.1.9) (2023-08-11)
 
 
