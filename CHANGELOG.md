@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.12](https://github.com/cloverdefa/hath-docker/compare/v1.1.11...v1.1.12) (2023-08-11)
+
+
+### Docs
+
+* fix typo in Dockerfile command ([418fcc8](https://github.com/cloverdefa/hath-docker/commit/418fcc85b3699ab42a12983a9ea28f8e4ceac8e1))
+* fix typo in package manager command ([fe928fe](https://github.com/cloverdefa/hath-docker/commit/fe928fede3e4f73c74736e530207dd0cf8df0db6))
+
 ## [1.1.11](https://github.com/cloverdefa/hath-docker/compare/v1.1.10...v1.1.11) (2023-08-11)
 
 
