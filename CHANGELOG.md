@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.13](https://github.com/cloverdefa/hath-docker/compare/v1.1.12...v1.1.13) (2023-08-12)
+
+
+### Build System
+
+* refactor Dockerfile to improve package installation efficiency ([0f434ee](https://github.com/cloverdefa/hath-docker/commit/0f434eee0494871a8baa73cd29bc8ce27596ebe3))
+
 ## [1.1.12](https://github.com/cloverdefa/hath-docker/compare/v1.1.11...v1.1.12) (2023-08-11)
 
 
