@@ -6,7 +6,7 @@ ARG HATH_VERSION=1.6.1
 
 WORKDIR /opt/hath
 
-COPY start.sh /opt/hath/
+ADD start.sh /opt/hath/
 
 RUN apk add --no-cache --update tzdata \
     && cp /usr/share/zoneinfo/Asia/Taipei /etc/localtime \
