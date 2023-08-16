@@ -8,13 +8,16 @@ WORKDIR /opt/hath
 
 COPY start.sh /opt/hath/
 
-RUN apk add --no-cache --update --virtual build-hath wget unzip \
+RUN apk add --no-cache --update tzdata \
+    && apk add --no-cache --update --virtual build-hath wget unzip \
     && wget -O /tmp/hath-$HATH_VERSION.zip \
     https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
     && unzip /tmp/hath-$HATH_VERSION.zip -d /opt/hath \
     && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
     && rm /tmp/hath-$HATH_VERSION.zip \
     && apk del build-hath
+    
+ENV TZ Asia/Taipei 
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
     CMD pgrep java|grep "1"||exit
