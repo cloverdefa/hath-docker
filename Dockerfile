@@ -16,7 +16,8 @@ RUN apk add --no-cache --update tzdata \
     && unzip /tmp/hath-$HATH_VERSION.zip -d /opt/hath \
     && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
     && rm /tmp/hath-$HATH_VERSION.zip \
-    && apk del build-hath
+    && apk del build-hath \
+    && chmod +x /opt/hath/start.sh
     
 ENV TZ Asia/Taipei 
 
