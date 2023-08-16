@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.14](https://github.com/cloverdefa/hath-docker/compare/v1.1.13...v1.1.14) (2023-08-16)
+
+
+### Code Refactoring
+
+* refactor code for improved efficiency, error handling, and clarity ([6bace14](https://github.com/cloverdefa/hath-docker/commit/6bace142f7e0dc5bafb66e02850f57cd4f2630a7))
+
+
+### Build System
+
+* change file mode to executable ([e3f1d3a](https://github.com/cloverdefa/hath-docker/commit/e3f1d3a2fb694547bc826804ffb662236a8d6c35))
+
 ## [1.1.13](https://github.com/cloverdefa/hath-docker/compare/v1.1.12...v1.1.13) (2023-08-12)
 
 
