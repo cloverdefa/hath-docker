@@ -13,6 +13,7 @@ You can use the following command to run Docker:
 ```
 docker run \
 --name hath \
+--net host \
 --user <Input Your UID Here>:<Input Your GID Here> \
 -v /path/to/your/hath/cache:/hath/cache \
 -v /path/to/your/hath/data:/hath/data \ 
@@ -22,7 +23,6 @@ docker run \
 -e HATH_CLIENT_ID=<Input Your HATH ID Here> \
 -e HATH_CLIENT_KEY=<Input Your HATH KEY Here> \
 -e UMASK=000 \
--p <YOUR_HATH_PORT>/tcp \
 cloverdefa/hath:latest
 ```
 
