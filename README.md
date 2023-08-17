@@ -22,7 +22,6 @@ docker run \
 -e HATH_CLIENT_ID=<Input Your HATH ID Here> \
 -e HATH_CLIENT_KEY=<Input Your HATH KEY Here> \
 -e UMASK=000 \
--e TZ=<Input YOUR_TIMEZONE Here> \
 -p <YOUR_HATH_PORT>/tcp \
 cloverdefa/hath:latest
 ```
@@ -48,7 +47,6 @@ services:
       HATH_CLIENT_ID: <Input Your HATH ID Here>
       HATH_CLIENT_KEY: <Input Your HATH KEY Here>
       UMASK: 000
-      TZ: <Input Your TimeZone Here>
 ```
    
 ## Docker Hub
