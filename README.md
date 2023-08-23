@@ -28,7 +28,7 @@ cloverdefa/hath:latest
 
 Certainly! Here's an example of a docker-compose.yml file that you can use to run the H@H client program:   
 
-docker-compose.yml (sample)    
+docker-compose.yml (exsample)    
 ```
 version: "3.8"
 
@@ -52,7 +52,7 @@ services:
 ```
 
 ### if use docker-compose create .env file   
-.env (sample)    
+.env (exsample)    
 
 ```
 UGID: 1000:1000  #change to your UID & GID
