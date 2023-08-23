@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  hath:
+    container_name: hath
+    image: cloverdefa/hath:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./cache:/hath/cache
+      - ./data:/hath/data  
+      - ./download:/hath/download
+      - ./log:/hath/log
+      - ./tmp:/hath/tmp
+    environment:
+      HATH_CLIENT_ID: $HATH_CLIENT_ID
+      HATH_CLIENT_KEY: $HATH_CLIENT_KEY
+      UMASK: 000
