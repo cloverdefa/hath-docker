@@ -34,7 +34,7 @@ services:
   hath:  
     image: cloverdefa/hath:latest
     container_name: hath
-    user: <Input Your UID Here>:<Input Your GID Here>
+    user: $UGID
     network_mode: host
     restart: unless-stopped
     volumes:
@@ -44,9 +44,17 @@ services:
       - ./log:/hath/log
       - ./tmp:/hath/tmp
     environment:
-      HATH_CLIENT_ID: <Input Your HATH ID Here>
-      HATH_CLIENT_KEY: <Input Your HATH KEY Here>
+      HATH_CLIENT_ID: $HATH_CLIENT_ID
+      HATH_CLIENT_KEY: $HATH_CLIENT_KEY
       UMASK: 000
+```
+
+### .env file (if use docker-compose)
+```
+HATH_CLIENT_ID: 00000
+HATH_CLIENT_KEY: aaabbbcccddd
+UGID: 1000:1000
+
 ```
    
 ## Docker Hub
