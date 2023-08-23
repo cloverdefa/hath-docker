@@ -6,6 +6,7 @@ services:
     image: cloverdefa/hath:latest
     restart: unless-stopped
     network_mode: host
+    user: $UGID
     volumes:
       - ./cache:/hath/cache
       - ./data:/hath/data  
