@@ -8,7 +8,7 @@ Version :
 H@H Client : 1.6.1   
 JAVA : OpenJDK-8   
    
-## Usage  
+### Usage  
 You can use the following command to run Docker:
 ```
 docker run \
@@ -28,7 +28,7 @@ cloverdefa/hath:latest
 
 Certainly! Here's an example of a docker-compose.yml file that you can use to run the H@H client program:   
 
-docker-compose.yml (exsample)    
+### docker-compose.yml (exsample)    
 ```
 version: "3.8"
 
