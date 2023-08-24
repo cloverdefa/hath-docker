@@ -55,9 +55,9 @@ services:
 .env (exsample)    
 
 ```
-UGID: 1000:1000  #change to your UID & GID
-HATH_CLIENT_ID: 00000  #change to your client id
-HATH_CLIENT_KEY: aaabbbcccddd  #change to your client key
+UGID: 1000:1000  #  change to your UID & GID
+HATH_CLIENT_ID: 00000  #  change to your client id
+HATH_CLIENT_KEY: aaabbbcccddd  #  change to your client key
 
 ```
    
