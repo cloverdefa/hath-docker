@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.17](https://github.com/cloverdefa/hath-docker/compare/v1.1.16...v1.1.17) (2023-08-25)
+
+
+### CI
+
+* update changelog-types field in release workflow ([8da236e](https://github.com/cloverdefa/hath-docker/commit/8da236e423dffe8eef98315633a661b0f01f6c0e))
+
 ## [1.1.14](https://github.com/cloverdefa/hath-docker/compare/v1.1.13...v1.1.14) (2023-08-16)
 
 
