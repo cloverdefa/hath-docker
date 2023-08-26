@@ -2,7 +2,6 @@
 .wget-hsts
 .code-workspace
 .DS_Store
-.env
 .log
 .md
 
