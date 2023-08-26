@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.18](https://github.com/cloverdefa/hath-docker/compare/v1.1.17...v1.1.18) (2023-08-26)
+
+
+### chore
+
+* add .gitignore file and ignore specific files and folders ([3324966](https://github.com/cloverdefa/hath-docker/commit/3324966cfde19784f58864e39069fb33fd9dd193))
+
 ## [1.1.17](https://github.com/cloverdefa/hath-docker/compare/v1.1.16...v1.1.17) (2023-08-25)
 
 
