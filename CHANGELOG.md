@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.19](https://github.com/cloverdefa/hath-docker/compare/v1.1.18...v1.1.19) (2023-08-26)
+
+
+### chore
+
+* ignore __pycache__ folder in git repository ([309ef0d](https://github.com/cloverdefa/hath-docker/commit/309ef0dfaf1bf22ab91193aa319958db6b8bef18))
+
 ## [1.1.18](https://github.com/cloverdefa/hath-docker/compare/v1.1.17...v1.1.18) (2023-08-26)
 
 
