@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.20](https://github.com/cloverdefa/hath-docker/compare/v1.1.19...v1.1.20) (2023-08-26)
+
+
+### chore
+
+* update .gitignore file ([513637b](https://github.com/cloverdefa/hath-docker/commit/513637b8755e2d4d1014b258348044233bf10037))
+
 ## [1.1.19](https://github.com/cloverdefa/hath-docker/compare/v1.1.18...v1.1.19) (2023-08-26)
 
 
