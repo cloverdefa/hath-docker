@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.21](https://github.com/cloverdefa/hath-docker/compare/v1.1.20...v1.1.21) (2023-08-27)
+
+
+### chore
+
+* ignore generated files and build artifacts in git ([57dbf18](https://github.com/cloverdefa/hath-docker/commit/57dbf1831567dfc2386560374b89f7d88f02e62c))
+
 ## [1.1.20](https://github.com/cloverdefa/hath-docker/compare/v1.1.19...v1.1.20) (2023-08-26)
 
 
