@@ -6,7 +6,7 @@ This is a H@H client program running on Docker.
    
 Version :   
 H@H Client : 1.6.1   
-JAVA : OpenJDK-8   
+JAVA : jdk8u382-b05   
    
 ### Usage  
 You can use the following command to run Docker:
