@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.22](https://github.com/cloverdefa/hath-docker/compare/v1.1.21...v1.1.22) (2023-08-30)
+
+
+### chore
+
+* update base image and version labels ([532baed](https://github.com/cloverdefa/hath-docker/commit/532baedb6a05a7835699686c51bc5618eb0bc38c))
+
+
+### Code Refactoring
+
+* update shebang line and remove unnecessary variable check ([f781a8a](https://github.com/cloverdefa/hath-docker/commit/f781a8a4728b3db28732560042f6206f03996268))
+
+
+### Build System
+
+* update package manager and remove unnecessary commands ([a08b3be](https://github.com/cloverdefa/hath-docker/commit/a08b3be7785aa99d9b078d57e09f2ce816030452))
+
 ## [1.1.21](https://github.com/cloverdefa/hath-docker/compare/v1.1.20...v1.1.21) (2023-08-27)
 
 
