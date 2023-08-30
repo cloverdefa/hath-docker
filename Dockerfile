@@ -1,6 +1,6 @@
-FROM openjdk:8-jre-alpine
+FROM eclipse-temurin:8u382-b05-jre-jammy
 LABEL MAINTAINER="cloverdefa"
-LABEL VERSION="0.1.5"
+LABEL VERSION="0.1.6"
 
 ARG HATH_VERSION=1.6.1
 
