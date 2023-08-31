@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.23](https://github.com/cloverdefa/hath-docker/compare/v1.1.22...v1.1.23) (2023-08-31)
+
+
+### Build System
+
+* refactor Dockerfile for improved readability and dependency management ([1ea99d2](https://github.com/cloverdefa/hath-docker/commit/1ea99d2058a183a79b99e5c3e32ffef330766a43))
+
 ## [1.1.22](https://github.com/cloverdefa/hath-docker/compare/v1.1.21...v1.1.22) (2023-08-30)
 
 
