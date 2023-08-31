@@ -9,7 +9,7 @@ services:
     user: $UGID
     volumes:
       - ./cache:/hath/cache
-      - ./data:/hath/data  
+      - ./data:/hath/data
       - ./download:/hath/download
       - ./log:/hath/log
       - ./tmp:/hath/tmp
