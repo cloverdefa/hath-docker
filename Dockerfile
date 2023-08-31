@@ -9,7 +9,7 @@ WORKDIR /opt/hath
 ADD start.sh /opt/hath/
 
 RUN apt-get update && apt-get dist-upgrade -y \
-    && apt-get install wget unzip -y\
+    && apt-get install wget unzip -y \
     && wget -O /tmp/hath-$HATH_VERSION.zip \
     https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
     && unzip /tmp/hath-$HATH_VERSION.zip -d /opt/hath \
