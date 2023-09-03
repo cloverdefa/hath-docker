@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.24](https://github.com/cloverdefa/hath-docker/compare/v1.1.23...v1.1.24) (2023-09-03)
+
+
+### chore
+
+* ignore generated files and folders in version control ([06a28fc](https://github.com/cloverdefa/hath-docker/commit/06a28fcd03739647261765d28c94c3620fe0884c))
+
 ## [1.1.23](https://github.com/cloverdefa/hath-docker/compare/v1.1.22...v1.1.23) (2023-08-31)
 
 
