@@ -5,10 +5,13 @@
 .md
 *.code-workspace
 *.spec
+pyproject.toml
+poetry.lock
 
 # 忽略資料夾
 __pycache__/
 .vscode/
+.venv/
 build/
 dist/
 
