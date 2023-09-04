@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.25](https://github.com/cloverdefa/hath-docker/compare/v1.1.24...v1.1.25) (2023-09-04)
+
+
+### chore
+
+* update ignored files list ([ddec6d8](https://github.com/cloverdefa/hath-docker/commit/ddec6d88454872edfea05518492a5ce02fdaa976))
+
 ## [1.1.24](https://github.com/cloverdefa/hath-docker/compare/v1.1.23...v1.1.24) (2023-09-03)
 
 
