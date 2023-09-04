@@ -1,6 +1,7 @@
 # 忽略檔案
 .wget-hsts
 .DS_Store
+.env
 .log
 .md
 *.code-workspace
@@ -10,8 +11,8 @@ poetry.lock
 
 # 忽略資料夾
 __pycache__/
-.vscode/
 .venv/
+.vscode/
 build/
 dist/
 
