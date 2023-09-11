@@ -19,7 +19,7 @@ jobs:
       # 使用這個專案已經寫好的 action
       uses: appleboy/telegram-action@master
       with:
-        to: ${{ secrets.BOT_IDID }}
+        to: ${{ secrets.BOT_ID }}
         token: ${{ secrets.BOT_TOKEN }}
         # 設定要發出的訊息格式，以下是參考原始 repo 後稍微改寫的設定
         # github.actor: 觸發 event 的使用者名稱
