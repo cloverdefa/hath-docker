@@ -29,5 +29,4 @@ jobs:
         message: |
           ${{ github.actor }} 提交內容: 
           ${{ github.event.commits[0].message }}
-
-           Repository: ${{ github.repository }}
+          Repository: ${{ github.repository }}
