@@ -1,6 +1,5 @@
 FROM amazoncorretto:20.0.2-alpine3.18
-LABEL MAINTAINER="cloverdefa"
-LABEL VERSION="0.1.7"
+LABEL MAINTAINER="cloverdefa" VERSION="0.1.7"
 
 ARG HATH_VERSION=1.6.1
 
