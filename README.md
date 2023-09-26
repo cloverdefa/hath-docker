@@ -5,7 +5,7 @@ hath-docker
 This is a H@H client program running on Docker.   
    
 Version :   
-H@H Client : 1.6.1   
+H@H Client : 1.6.2   
 JAVA : openjdk 20.0.2.1 2023-08-22   
    
 ### Usage  
