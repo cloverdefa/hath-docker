@@ -51,8 +51,7 @@ services:
       UMASK: 000
 ```
 
-### 如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存   
-你的ID以及KEY
+### 如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY   
 .env (範例)    
 
 ```
