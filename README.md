@@ -2,14 +2,14 @@
     
 hath-docker   
 
-This is a H@H client program running on Docker.   
+在Docker容器中執行H@H客戶端
    
-Version :   
-H@H Client : 1.6.2   
-JAVA : java-21-amazon-corretto   
+版本 :   
+H@H客戶端版本 : 1.6.2   
+JAVA版本 : java-21-amazon-corretto   
    
 ### Usage  
-You can use the following command to run Docker:
+執行以下指令來運作容器:
 ```
 docker run \
 --name hath \
@@ -26,9 +26,9 @@ docker run \
 cloverdefa/hath:latest
 ```
 
-Certainly! Here's an example of a docker-compose.yml file that you can use to run the H@H client program:   
+你也能夠使用docker-compose來運作容器:   
 
-### docker-compose.yml    
+### docker-compose.yml範例    
 ```
 version: "3.8"
 
@@ -51,15 +51,18 @@ services:
       UMASK: 000
 ```
 
-### if use docker-compose create .env file   
-.env (exsample)    
+### 如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存   
+你的ID以及KEY
+.env (範例)    
 
 ```
-UGID: 1000:1000    #  change 1000:1000 to your UID & GID
-HATH_CLIENT_ID: 00000    #  change 00000 to your client id
-HATH_CLIENT_KEY: aaabbbccc    #  change aaabbbccc to your client key
+UGID: 1000:1000    #  變更 1000:1000 為你的 UID:GID
+HATH_CLIENT_ID: 00000    #  變更 00000 為你的 client id
+HATH_CLIENT_KEY: aaabbbccc    #  變更 aaabbbccc 為你的 client key
 
 ```
+變更.env檔案權限   
+chmod 600 .env   
    
 ## Docker Hub
 
