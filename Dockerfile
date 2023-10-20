@@ -1,5 +1,5 @@
 FROM amazoncorretto:8u392-alpine3.18-jre
-LABEL MAINTAINER="cloverdefa" VERSION="0.1.8"
+LABEL MAINTAINER="cloverdefa" VERSION="1.2.3"
 
 ARG HATH_VERSION=1.6.2
 
