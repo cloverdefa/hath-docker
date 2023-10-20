@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - "main"
+      - "feature"
 
 jobs:
   docker:
@@ -26,4 +26,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:1.2.3
+          tags: cloverdefa/hath:test
