@@ -26,4 +26,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:0.1.8
+          tags: cloverdefa/hath:1.2.3

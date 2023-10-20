@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine3.18
+FROM amazoncorretto:8u392-alpine3.18-jre
 LABEL MAINTAINER="cloverdefa" VERSION="0.1.8"
 
 ARG HATH_VERSION=1.6.2
