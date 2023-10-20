@@ -6,7 +6,6 @@ hath-docker
    
 版本 :   
 H@H客戶端版本 : 1.6.2   
-JAVA版本 : java-21-amazon-corretto   
    
 ### Usage  
 執行以下指令來運作容器:
