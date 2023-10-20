@@ -13,14 +13,14 @@ H@H客戶端版本 : 1.6.2
 docker run \
 --name hath \
 --net host \
---user <Input Your UID Here>:<Input Your GID Here> \
+--user <你的UID>:<你的GID> \
 -v /path/to/your/hath/cache:/hath/cache \
 -v /path/to/your/hath/data:/hath/data \ 
 -v /path/to/your/hath/download>:/hath/download \
 -v /path/to/your/hath/log:/hath/log \
 -v /path/to/your/hath/tmp:/hath/tmp \
--e HATH_CLIENT_ID=<Input Your HATH ID Here> \
--e HATH_CLIENT_KEY=<Input Your HATH KEY Here> \
+-e HATH_CLIENT_ID=<輸入你的HATH ID> \
+-e HATH_CLIENT_KEY=<輸入你的HATH KEY> \
 -e UMASK=000 \
 cloverdefa/hath:latest
 ```
@@ -35,7 +35,7 @@ services:
   hath:  
     image: cloverdefa/hath:latest
     container_name: hath
-    user: $UGID
+    user: ${ID}
     network_mode: host
     restart: unless-stopped
     volumes:
@@ -45,8 +45,8 @@ services:
       - ./log:/hath/log
       - ./tmp:/hath/tmp
     environment:
-      HATH_CLIENT_ID: $HATH_CLIENT_ID
-      HATH_CLIENT_KEY: $HATH_CLIENT_KEY
+      HATH_CLIENT_ID: ${HATH_CLIENT_ID}
+      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY}
       UMASK: 000
 ```
 
@@ -54,7 +54,7 @@ services:
 .env (範例)    
 
 ```
-UGID: 1000:1000    #  變更 1000:1000 為你的 UID:GID
+ID: 1000:1000    #  變更 1000:1000 為你的 UID:GID
 HATH_CLIENT_ID: 00000    #  變更 00000 為你的 client id
 HATH_CLIENT_KEY: aaabbbccc    #  變更 aaabbbccc 為你的 client key
 
