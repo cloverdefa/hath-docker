@@ -1,7 +1,6 @@
 # 忽略檔案
 .wget-hsts
 .DS_Store
-.env
 .log
 .md
 *.code-workspace
