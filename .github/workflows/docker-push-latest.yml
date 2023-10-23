@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - "feature"
+      - "main"
     
 env:
   HATH_VERSION: 1.6.2
