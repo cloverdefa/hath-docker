@@ -1,11 +1,9 @@
 FROM amazoncorretto:8u392-alpine3.18-jre
-LABEL MAINTAINER="cloverdefa" VERSION="1.2.3"
+LABEL MAINTAINER="cloverdefa"
 
-ARG HATH_VERSION=1.6.2
+ARG HATH_VERSION
 
 WORKDIR /opt/hath
-
-ADD start.sh /opt/hath/
 
 RUN apk add --no-cache --update --virtual build-hath wget unzip \
     && wget -O /tmp/hath-$HATH_VERSION.zip \
@@ -14,6 +12,8 @@ RUN apk add --no-cache --update --virtual build-hath wget unzip \
     && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
     && rm /tmp/hath-$HATH_VERSION.zip \
     && apk del build-hath
+
+ADD start.sh /opt/hath/
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
     CMD pgrep java|grep "1"||exit

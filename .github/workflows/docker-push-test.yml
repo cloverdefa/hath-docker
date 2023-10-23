@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "feature"
+    
+env:
+  HATH_VERSION: 1.6.2
 
 jobs:
   docker:
@@ -27,3 +30,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: cloverdefa/hath:test
+          build-args: HATH_VERSION=${{ env.HATH_VERSION }}
