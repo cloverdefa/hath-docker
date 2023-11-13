@@ -29,5 +29,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:latest
+          tags: cloverdefa/hath:${{ env.HATH_VERSION }}, cloverdefa/hath:latest
           build-args: HATH_VERSION=${{ env.HATH_VERSION }}

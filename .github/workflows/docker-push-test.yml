@@ -7,7 +7,6 @@ on:
     
 env:
   HATH_VERSION: 1.6.2
-  DOCKER_VERSION: 1.6.2.1
 
 jobs:
   docker:
@@ -30,5 +29,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:${{ env.DOCKER_VERSION }}, cloverdefa/hath:test
+          tags: cloverdefa/hath:test
           build-args: HATH_VERSION=${{ env.HATH_VERSION }}
