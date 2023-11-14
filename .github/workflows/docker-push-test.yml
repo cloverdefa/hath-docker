@@ -3,10 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - "main"
-
-env:
-  IMAGE_VERSION: 0.1.9
+      - "feature"
 
 jobs:
   docker:
@@ -29,4 +26,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}, cloverdefa/hath:latest
+          tags: cloverdefa/hath:test

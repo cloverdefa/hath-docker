@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 
 # set umask accordingly
 if [ "${UMASK:-UNSET}" != "UNSET" ]; then
