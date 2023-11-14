@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - "main"
-    
+
 env:
-  HATH_VERSION: 1.6.2
+  IMAGE_VERSION: 1.9
 
 jobs:
   docker:
@@ -29,5 +29,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:${{ env.HATH_VERSION }}, cloverdefa/hath:latest
-          build-args: HATH_VERSION=${{ env.HATH_VERSION }}
+          tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}, cloverdefa/hath:latest

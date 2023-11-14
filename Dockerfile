@@ -1,17 +1,24 @@
-FROM amazoncorretto:8u392-alpine3.18-jre
+FROM alpine:latest AS build-hath
+
+ARG HATH_VERSION=1.6.2
+WORKDIR /app
+
+RUN apk add wget unzip \
+    && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
+    && unzip HentaiAtHome_$HATH_VERSION.zip \
+    && rm autostartgui.bat HentaiAtHomeGUI.jar \
+    && rm HentaiAtHome_$HATH_VERSION.zip
+
+COPY . ./
+
+FROM amazoncorretto:latest
 LABEL MAINTAINER="cloverdefa"
 
 ARG HATH_VERSION
 
 WORKDIR /opt/hath
 
-RUN apk add --no-cache --update --virtual build-hath wget unzip \
-    && wget -O /tmp/hath-$HATH_VERSION.zip \
-    https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
-    && unzip /tmp/hath-$HATH_VERSION.zip -d /opt/hath \
-    && rm /opt/hath/autostartgui.bat HentaiAtHomeGUI.jar \
-    && rm /tmp/hath-$HATH_VERSION.zip \
-    && apk del build-hath
+COPY --from=build-hath /app/ /opt/hath/
 
 ADD start.sh /opt/hath/
 
