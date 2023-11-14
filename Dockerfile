@@ -5,16 +5,10 @@ WORKDIR /app
 
 RUN apk add wget unzip \
     && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
-    && unzip HentaiAtHome_$HATH_VERSION.zip \
-    && rm autostartgui.bat HentaiAtHomeGUI.jar \
-    && rm HentaiAtHome_$HATH_VERSION.zip
-
-COPY . ./
+    && unzip HentaiAtHome_$HATH_VERSION.zip
 
 FROM amazoncorretto:latest
 LABEL MAINTAINER="cloverdefa"
-
-ARG HATH_VERSION
 
 WORKDIR /opt/hath
 
