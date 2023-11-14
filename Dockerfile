@@ -1,4 +1,4 @@
-FROM alpine:latest AS build-hath
+FROM alpine:latest AS get-hath
 
 ARG HATH_VERSION=1.6.2
 WORKDIR /app
@@ -12,7 +12,7 @@ LABEL MAINTAINER="cloverdefa"
 
 WORKDIR /opt/hath
 
-COPY --from=build-hath /app/HentaiAtHome.jar /opt/hath/
+COPY --from=get-hath /app/HentaiAtHome.jar /opt/hath/
 
 ADD start.sh /opt/hath/
 
