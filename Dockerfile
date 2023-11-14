@@ -18,12 +18,9 @@ ARG HATH_VERSION
 
 WORKDIR /opt/hath
 
-COPY --from=build-hath /app/ /opt/hath/
+COPY --from=build-hath /app/HentaiAtHome.jar /opt/hath/
 
 ADD start.sh /opt/hath/
-
-HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
-    CMD pgrep java|grep "1"||exit
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
