@@ -1,6 +1,6 @@
 # GIT
-.github\
-.git\
+.github/
+.git/
 .gitignore
 README.md
 SECURITY.md
