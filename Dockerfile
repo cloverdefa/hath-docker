@@ -1,4 +1,4 @@
-FROM alpine:latest AS get-hath
+FROM alpine:latest as get-hath
 
 ARG HATH_VERSION=1.6.2
 
