@@ -1,4 +1,4 @@
-FROM alpine:latest as get-hath
+FROM alpine:latest AS get-hath
 ARG HATH_VERSION=1.6.2
 
 WORKDIR /app
