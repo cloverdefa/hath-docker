@@ -6,7 +6,7 @@ on:
       - "main"
 
 env:
-  IMAGE_VERSION: 0.1.9
+  IMAGE_VERSION: 0.2.0
 
 jobs:
   docker:
