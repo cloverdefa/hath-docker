@@ -4,3 +4,6 @@
 .gitignore
 README.md
 SECURITY.md
+
+# Dockerfile
+.dockerignore
