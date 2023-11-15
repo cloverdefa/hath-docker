@@ -23,6 +23,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64,linux/arm64
+          context: ./docker
+          no-cache: true
+          platforms: linux/amd64
           push: true
           tags: cloverdefa/hath:test
