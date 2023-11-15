@@ -16,7 +16,7 @@ WORKDIR /opt/hath
 
 COPY --from=get-hath /app/HentaiAtHome.jar /opt/hath/
 
-COPY start.sh /opt/hath/
+COPY /RUN/start.sh /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
