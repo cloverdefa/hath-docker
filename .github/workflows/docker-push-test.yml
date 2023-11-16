@@ -5,6 +5,9 @@ on:
     branches:
       - "feature"
 
+env:
+  HATH_VERSION: 1.6.2      
+
 jobs:
   docker:
     runs-on: ubuntu-latest

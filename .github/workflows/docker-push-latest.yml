@@ -6,6 +6,7 @@ on:
       - "main"
 
 env:
+  HATH_VERSION: 1.6.2
   IMAGE_VERSION: 0.2.0
 
 jobs:
