@@ -29,35 +29,35 @@ cloverdefa/hath:latest
 
 ### docker-compose.yml範例    
 ```
-version: "3.8"
-
-services:
-  hath:  
-    image: cloverdefa/hath:latest
-    container_name: hath
-    user: ${ID}
-    network_mode: host
-    restart: unless-stopped
-    volumes:
-      - ./cache:/hath/cache
-      - ./data:/hath/data  
-      - ./download:/hath/download
-      - ./log:/hath/log
-      - ./tmp:/hath/tmp
-    environment:
-      HATH_CLIENT_ID: ${HATH_CLIENT_ID}
-      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY}
-      UMASK: 000
+version: "3.9"   
+   
+services:   
+  hath:   
+    container_name: hath   
+    image: cloverdefa/hath:latest   
+    restart: unless-stopped   
+    network_mode: host   
+    user: ${ID} # 使用 .env 內設定的 UID:GID   
+    volumes:   
+      - ./cache:/hath/cache   
+      - ./data:/hath/data   
+      - ./download:/hath/download   
+      - ./log:/hath/log   
+      - ./tmp:/hath/tmp   
+    environment:   
+      HATH_CLIENT_ID: ${HATH_CLIENT_ID} # 使用 .env 內設定的 H@H Client ID   
+      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY} # 使用 .env 內設定的 H@H Client KEY   
+      UMASK: '000'   
+      TZ: 'Asia/Taipei' # 設定主機所在時區   
 ```
 
 ### 如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY   
 .env (範例)    
 
 ```
-ID: 1000:1000    #  變更 1000:1000 為你的 UID:GID
-HATH_CLIENT_ID: 00000    #  變更 00000 為你的 client id
-HATH_CLIENT_KEY: aaabbbccc    #  變更 aaabbbccc 為你的 client key
-
+ID: 1000:1000    #  設定你的 UID:GID   
+HATH_CLIENT_ID: 00000    #  設定你的 H@H client id   
+HATH_CLIENT_KEY: aaabbbccc    #  設定你的 H@H client key   
 ```
 變更.env檔案權限   
 chmod 600 .env   
