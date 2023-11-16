@@ -9,7 +9,7 @@ FROM amazoncorretto:latest
 LABEL MAINTAINER="cloverdefa"
 
 RUN mkdir /opt/hath \
-    && mkdir /opt/hath
+    && mkdir /hath
 
 COPY --from=get-hath ./HentaiAtHome.jar /opt/hath/
 COPY /RUN/run.sh /opt/hath/
