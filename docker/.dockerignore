@@ -1,24 +1,24 @@
 # GIT
-.github
-.git
-.gitignore
-README.md
-SECURITY.md
+*/.github
+*/.git
+*/.gitignore
+*/README.md
+*/SECURITY.md
 
 # Dockerfile
-Dockerfile*
-docker-compose*
-.dockerignore
+*/Dockerfile*
+*/docker-compose*
+*/.dockerignore
 
 # 忽略檔案
-**/.wget-hsts
-**/.DS_Store
-.log
-.md
-*.code-workspace
-*.spec
-pyproject.toml
-poetry.lock
+*/.wget-hsts
+*/.DS_Store
+*/*.log
+*/*.md
+*/*.code-workspace
+*/*.spec
+*/pyproject.toml
+*/poetry.lock
 
 # 忽略資料夾
-.vscode
+*/.vscode
