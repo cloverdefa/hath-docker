@@ -1,4 +1,3 @@
-# .github/workflows/docker-build.yml
 name: ci
 
 on:
@@ -8,7 +7,6 @@ on:
 
 env:
   IMAGE_VERSION: 0.2.0
-  HATH_VERSION: "1.6.2"
 
 jobs:
   docker:
@@ -26,9 +24,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
-        run: |
-          docker buildx create --use
-          docker buildx inspect --bootstrap
-          docker buildx build --platform linux/amd64,linux/arm64 --build-arg HATH_VERSION=${{ env.HATH_VERSION }} -t cloverdefa/hath:${{ env.IMAGE_VERSION }} -t cloverdefa/hath:latest .
-          docker push cloverdefa/hath:${{ env.IMAGE_VERSION }}
-          docker push cloverdefa/hath:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}, cloverdefa/hath:latest
