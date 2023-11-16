@@ -8,8 +8,7 @@ RUN apk add wget unzip \
 FROM amazoncorretto:latest
 LABEL MAINTAINER="cloverdefa"
 
-RUN mkdir /opt/hath \
-    && mkdir /hath
+RUN mkdir /opt/hath && mkdir /hath
 
 COPY --from=get-hath ./HentaiAtHome.jar /opt/hath/
 COPY /RUN/run.sh /opt/hath/
