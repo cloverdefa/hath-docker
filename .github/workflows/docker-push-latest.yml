@@ -6,7 +6,6 @@ on:
       - "main"
 
 env:
-  HATH_VERSION: 1.6.2
   IMAGE_VERSION: 0.2.0
 
 jobs:
@@ -25,6 +24,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
+          context: .
+          file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}, cloverdefa/hath:latest
