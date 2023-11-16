@@ -6,11 +6,13 @@
 */SECURITY.md
 
 # Dockerfile
+*/docker
 */Dockerfile*
 */docker-compose*
 */.dockerignore
 
 # 忽略檔案
+*/.env
 */.wget-hsts
 */.DS_Store
 */*.log
@@ -21,4 +23,5 @@
 */poetry.lock
 
 # 忽略資料夾
+*/example
 */.vscode
