@@ -1,16 +1,18 @@
+# 第一階段
 FROM alpine:latest AS get-hath
 ENV HATH_VERSION="1.6.2"
 
-RUN apk add wget unzip \
+RUN apk add --no-cache wget unzip \
     && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
-    && unzip HentaiAtHome_$HATH_VERSION.zip
+    && unzip HentaiAtHome_$HATH_VERSION.zip -d /tmp
 
+# 第二階段
 FROM amazoncorretto:latest
 LABEL MAINTAINER="cloverdefa"
 
-RUN mkdir /opt/hath && mkdir /hath
+RUN mkdir -p /opt/hath /hath
 
-COPY --from=get-hath ./HentaiAtHome.jar /opt/hath/
+COPY --from=get-hath /tmp/HentaiAtHome.jar /opt/hath/
 COPY /RUN/run.sh /opt/hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
