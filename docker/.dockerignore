@@ -1,0 +1,27 @@
+# GIT
+*/.github
+*/.git
+*/.gitignore
+*/README.md
+*/SECURITY.md
+
+# Dockerfile
+*/docker
+*/Dockerfile*
+*/docker-compose*
+*/.dockerignore
+
+# 忽略檔案
+*/.env
+*/.wget-hsts
+*/.DS_Store
+*/*.log
+*/*.md
+*/*.code-workspace
+*/*.spec
+*/pyproject.toml
+*/poetry.lock
+
+# 忽略資料夾
+*/example
+*/.vscode

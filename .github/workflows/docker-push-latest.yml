@@ -6,14 +6,12 @@ on:
       - "main"
 
 env:
-  IMAGE_VERSION: 0.1.9
+  IMAGE_VERSION: 0.2.0
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -27,6 +25,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}, cloverdefa/hath:latest

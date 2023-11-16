@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# set umask accordingly
+# 設定適當的 umask
 if [ "${UMASK:-UNSET}" != "UNSET" ]; then
   umask "$UMASK"
 fi
 
-# Create client_login if it doesn't exist yet
+# 創建 client_login，如果尚不存在
 if [ ! -f /hath/data/client_login ]; then
 	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >> /hath/data/client_login
 fi
 
+# 設定資料夾路徑
 exec java -jar /opt/hath/HentaiAtHome.jar \
     --cache-dir=/hath/cache               \
     --data-dir=/hath/data                 \
