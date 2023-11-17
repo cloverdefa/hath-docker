@@ -18,9 +18,6 @@
 */*.log
 */*.md
 */*.code-workspace
-*/*.spec
-*/pyproject.toml
-*/poetry.lock
 
 # 忽略資料夾
 */example

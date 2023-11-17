@@ -1,5 +1,5 @@
 # 第一階段
-FROM alpine:latest AS get-hath
+FROM alpine:latest AS download-hath
 ENV HATH_VERSION="1.6.2"
 
 RUN apk add --no-cache wget unzip \
@@ -10,11 +10,11 @@ RUN apk add --no-cache wget unzip \
 FROM amazoncorretto:latest
 LABEL MAINTAINER="cloverdefa"
 
-RUN mkdir -p /opt/hath /hath
+RUN mkdir -p /hath
 
-COPY --from=get-hath /tmp/HentaiAtHome.jar /opt/hath/
-COPY /RUN/run.sh /opt/hath/
+COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
+COPY /RUN/run.sh /hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
-CMD ["/opt/hath/run.sh"]
+CMD ["/hath/run.sh"]
