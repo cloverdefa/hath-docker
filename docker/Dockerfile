@@ -13,7 +13,7 @@ LABEL MAINTAINER="cloverdefa"
 RUN mkdir /hath
 
 COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
-COPY /run/run.sh /hath/
+COPY /run.sh/run.sh /hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
