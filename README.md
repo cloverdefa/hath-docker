@@ -51,9 +51,8 @@ services:
       TZ: 'Asia/Taipei' # 設定主機所在時區   
 ```
 
-### 如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY   
-.env (範例)    
-
+如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY  
+### .env(範例)   
 ```
 ID: 1000:1000    #  設定你的 UID:GID   
 HATH_CLIENT_ID: 00000    #  設定你的 H@H client id   
