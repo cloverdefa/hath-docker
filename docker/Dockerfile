@@ -7,7 +7,7 @@ RUN apk add --no-cache wget unzip \
     && unzip HentaiAtHome_$HATH_VERSION.zip -d /tmp
 
 # 第二階段
-FROM amazoncorretto:latest
+FROM amazoncorretto:8u392-alpine3.18-jre
 LABEL MAINTAINER="cloverdefa"
 
 RUN mkdir /hath
