@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 # 設定適當的 umask
 if [ "${UMASK:-UNSET}" != "UNSET" ]; then
