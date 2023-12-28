@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - "main"
+      - "latest"
+      - "develop"
 
   pull_request_review:
     types:
