@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - "main"
+      - "last"
 
 env:
   IMAGE_VERSION: 0.2.2
