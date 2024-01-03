@@ -37,7 +37,7 @@ services:
     image: cloverdefa/hath:latest   
     restart: unless-stopped   
     network_mode: host   
-        PUID: ${HOST_UID} # 使用 .env 內設定的 UID   
+    PUID: ${HOST_UID} # 使用 .env 內設定的 UID   
     PGID: ${HOST_GID} # 使用 .env 內設定的 GID   
     volumes:   
       - ./cache:/hath/cache   
