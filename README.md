@@ -37,8 +37,7 @@ services:
     image: cloverdefa/hath:latest   
     restart: unless-stopped   
     network_mode: host   
-    PUID: ${HOST_UID} # 使用 .env 內設定的 UID   
-    PGID: ${HOST_GID} # 使用 .env 內設定的 GID   
+    user: ${ID}  #  使用 .env 內設定的 UID:GID   
     volumes:   
       - ./cache:/hath/cache   
       - ./data:/hath/data   
@@ -55,8 +54,7 @@ services:
 如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY  
 ### .env(範例)   
 ```
-HOST_UID: 1000    #  設定你的 UID   
-HOST_GID: 1000    #  設定你的 GID   
+ID: 1000:100  #  設定你的 UID:GID  
 HATH_CLIENT_ID: 00000    #  設定你的 H@H client id   
 HATH_CLIENT_KEY: aaabbbccc    #  設定你的 H@H client key   
 ```
