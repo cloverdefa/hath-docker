@@ -6,7 +6,7 @@ on:
       - "latest"
 
 env:
-  IMAGE_VERSION: 0.2.4
+  IMAGE_VERSION: 0.2.5
 
 jobs:
   docker:
