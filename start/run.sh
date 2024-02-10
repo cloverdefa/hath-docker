@@ -1,14 +1,14 @@
 #!/bin/ash
+set -e
 
 # 設定適當的 umask
-if [ "${UMASK:-UNSET}" != "UNSET" ]; then
-  umask "$UMASK"
-fi
+[ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
+
+# 確保目錄存在
+mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
 
 # 創建 client_login，如果尚不存在
-if [ ! -f /hath/data/client_login ]; then
-	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >> /hath/data/client_login
-fi
+[ ! -f /hath/data/client_login ] && printf "%s-%s" "${HATH_CLIENT_ID}" "${HATH_CLIENT_KEY}" >> /hath/data/client_login
 
 # 建立Docker Health檢查
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
