@@ -14,9 +14,10 @@ HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
     CMD pgrep -f "java -jar /hath/HentaiAtHome.jar" || exit 1
 
 # 設定資料夾路徑
-exec java -jar /hath/HentaiAtHome.jar --disable_bwm \
-    --cache-dir=/hath/cache               \
-    --data-dir=/hath/data                 \
-    --download-dir=/hath/download         \
-    --log-dir=/hath/log                   \
+exec java -jar /hath/HentaiAtHome.jar \
+    --disable_bwm                     \
+    --cache-dir=/hath/cache           \
+    --data-dir=/hath/data             \
+    --download-dir=/hath/download     \
+    --log-dir=/hath/log               \
     --temp-dir=/hath/tmp
