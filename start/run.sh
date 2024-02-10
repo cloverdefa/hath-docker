@@ -18,7 +18,7 @@ set -e
 
 # 建立Docker Health檢查
 HEALTHCHECK --interval=120s --timeout=30s --start-period=60s --retries=3 \
-    CMD ps -l|grep "HentaiAtHome"||exit
+    CMD ps -l|grep "HentaiAtHome"||exit 1
 
 # 設定資料夾路徑
 exec java -jar /hath/HentaiAtHome.jar --disable_bwm \
