@@ -5,9 +5,9 @@ set -e
 [ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
 
 # 如果 client_login 檔案不存在，則創建並寫入內容
-[ ! -f /hath/data/client_login ] && {
-    printf "%s-%s" "${HATH_CLIENT_ID}" "${HATH_CLIENT_KEY}" > /hath/data/client_login
-}
+if [ ! -f /hath/data/client_login ]; then
+	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >> /hath/data/client_login
+fi
 
 # 建立Docker Health檢查
 HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
