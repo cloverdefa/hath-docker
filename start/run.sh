@@ -14,7 +14,7 @@ mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
 }
 
 # 建立Docker Health檢查
-HEALTHCHECK --interval=120s --timeout=30s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
     CMD pgrep -f "java -jar /hath/HentaiAtHome.jar" || exit 1
 
 # 設定資料夾路徑
