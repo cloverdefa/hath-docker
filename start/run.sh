@@ -4,10 +4,6 @@ set -e
 # 設定適當的 umask
 [ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
 
-# 確保目錄存在
-# 確保目錄存在
-mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
-
 # 如果 client_login 檔案不存在，則創建並寫入內容
 [ ! -f /hath/data/client_login ] && {
     printf "%s-%s" "${HATH_CLIENT_ID}" "${HATH_CLIENT_KEY}" > /hath/data/client_login
