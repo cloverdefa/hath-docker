@@ -11,7 +11,7 @@ if [ ! -f /hath/data/client_login ]; then
 fi
 
 # 設定資料夾路徑
-exec java -jar /hath/HentaiAtHome.jar \
+exec java -jar /hath/HentaiAtHome.jar --disable_bwm \
     --cache-dir=/hath/cache               \
     --data-dir=/hath/data                 \
     --download-dir=/hath/download         \
