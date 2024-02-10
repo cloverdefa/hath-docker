@@ -15,7 +15,7 @@ mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
 
 # 建立Docker Health檢查
 HEALTHCHECK --interval=120s --timeout=30s --start-period=60s --retries=3 \
-    CMD pidof java || exit 1
+    CMD pgrep -f "java -jar /hath/HentaiAtHome.jar" || exit 1
 
 # 設定資料夾路徑
 exec java -jar /hath/HentaiAtHome.jar --disable_bwm \
