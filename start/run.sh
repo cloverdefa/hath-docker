@@ -5,10 +5,16 @@ set -e
 [ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
 
 # 確保目錄存在
-mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
+[ ! -d /hath/cache ] && mkdir -p /hath/cache
+[ ! -d /hath/data ] && mkdir -p /hath/data
+[ ! -d /hath/download ] && mkdir -p /hath/download
+[ ! -d /hath/log ] && mkdir -p /hath/log
+[ ! -d /hath/tmp ] && mkdir -p /hath/tmp
 
-# 創建 client_login，如果尚不存在
-[ ! -f /hath/data/client_login ] && printf "%s-%s" "${HATH_CLIENT_ID}" "${HATH_CLIENT_KEY}" >> /hath/data/client_login
+# 如果 client_login 檔案不存在，則創建並寫入內容
+[ ! -f /hath/data/client_login ] && {
+    printf "%s-%s" "${HATH_CLIENT_ID}" "${HATH_CLIENT_KEY}" > /hath/data/client_login
+}
 
 # 建立Docker Health檢查
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
