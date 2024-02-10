@@ -1,19 +1,25 @@
 #!/bin/ash
 
-# 設定適當的 umask
-if [ "${UMASK:-UNSET}" != "UNSET" ]; then
-  umask "$UMASK"
-fi
+# 設定錯誤則立即退出
+set -e
 
-# 創建 client_login，如果尚不存在
+# 設定適當的 umask
+[ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
+
+# 如果 client_login 檔案不存在，則創建並寫入內容
 if [ ! -f /hath/data/client_login ]; then
 	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >> /hath/data/client_login
 fi
 
-# 設定資料夾路徑
+# 建立Docker Health檢查
+HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
+    CMD pgrep -f "java -jar /hath/HentaiAtHome.jar" || exit 1
+
+# 設定啟動參數及資料夾路徑
 exec java -jar /hath/HentaiAtHome.jar \
-    --cache-dir=/hath/cache               \
-    --data-dir=/hath/data                 \
-    --download-dir=/hath/download         \
-    --log-dir=/hath/log                   \
+    --disable_bwm                     \
+    --cache-dir=/hath/cache           \
+    --data-dir=/hath/data             \
+    --download-dir=/hath/download     \
+    --log-dir=/hath/log               \
     --temp-dir=/hath/tmp
