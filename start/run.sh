@@ -10,7 +10,7 @@ if [ ! -f /hath/data/client_login ]; then
 	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >> /hath/data/client_login
 fi
 
-# 建立Docker Heath檢查
+# 建立Docker Health檢查
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
     CMD ps ax |grep "HentaiAtHome"||exit
 
