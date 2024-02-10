@@ -5,11 +5,8 @@ set -e
 [ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
 
 # 確保目錄存在
-[ ! -d /hath/cache ] && mkdir -p /hath/cache
-[ ! -d /hath/data ] && mkdir -p /hath/data
-[ ! -d /hath/download ] && mkdir -p /hath/download
-[ ! -d /hath/log ] && mkdir -p /hath/log
-[ ! -d /hath/tmp ] && mkdir -p /hath/tmp
+# 確保目錄存在
+mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
 
 # 如果 client_login 檔案不存在，則創建並寫入內容
 [ ! -f /hath/data/client_login ] && {
@@ -18,7 +15,7 @@ set -e
 
 # 建立Docker Health檢查
 HEALTHCHECK --interval=120s --timeout=30s --start-period=60s --retries=3 \
-    CMD pgrep "HentaiAtHome" | wc -l | grep -q "^[1-9]" || exit 1
+    CMD pidof java || exit 1
 
 # 設定資料夾路徑
 exec java -jar /hath/HentaiAtHome.jar --disable_bwm \
