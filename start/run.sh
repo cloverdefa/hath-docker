@@ -17,7 +17,7 @@ set -e
 }
 
 # 建立Docker Health檢查
-HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=120s --timeout=30s --start-period=60s --retries=3 \
     CMD ps -l|grep "HentaiAtHome"||exit
 
 # 設定資料夾路徑
