@@ -13,7 +13,8 @@ LABEL maintainer="cloverdefa<jackie@dast.tw>"
 
 RUN mkdir /hath
 
-COPY --from=download-hath /tmp/HentaiAtHome.jar ./start/run.sh /hath/
+COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
+COPY ./start/run.sh /hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
