@@ -6,6 +6,9 @@ set -e
 # 設定適當的 umask
 [ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
 
+# 檢查並建立缺少的資料夾
+mkdir -p /hath/cache /hath/data /hath/download /hath/log /hath/tmp
+
 # 如果 client_login 檔案不存在，則創建並寫入內容
 if [ ! -f /hath/data/client_login ]; then
 	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >> /hath/data/client_login
