@@ -4,12 +4,11 @@ ARG HATH_VERSION="1.6.2"
 
 RUN apk add --no-cache wget unzip \
     && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
-    && unzip HentaiAtHome_$HATH_VERSION.zip -d /tmp \
-    && [ -f "/tmp/HentaiAtHome.jar" ] || exit 1
+    && unzip HentaiAtHome_$HATH_VERSION.zip -d /tmp
 
 # 第二階段
-FROM amazoncorretto:8-alpine3.19-jre
-LABEL maintainer="cloverdefa<jackie@dast.tw>"
+FROM amazoncorretto:8u402-alpine3.19-jre
+LABEL MAINTAINER="cloverdefa"
 
 RUN mkdir /hath
 
