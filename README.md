@@ -8,24 +8,24 @@ hath-docker
 H@H客戶端版本 : 1.6.2   
    
 ### Usage  
-執行以下指令來運作容器:
+使用docker來運作容器:
 ```
 docker run \
 --name hath \
 --net host \
---user <你的UID>:<你的GID> \
--v /path/to/your/hath/cache:/hath/cache \
--v /path/to/your/hath/data:/hath/data \ 
--v /path/to/your/hath/download>:/hath/download \
--v /path/to/your/hath/log:/hath/log \
--v /path/to/your/hath/tmp:/hath/tmp \
--e HATH_CLIENT_ID=<輸入你的HATH ID> \
--e HATH_CLIENT_KEY=<輸入你的HATH KEY> \
+--user ${UID}:${GID} \
+-v /本地cache路徑:/hath/cache \
+-v /本地data路徑:/hath/data \ 
+-v /本地download路徑:/hath/download \
+-v /本地log路徑:/hath/log \
+-v /本地tmp路徑:/hath/tmp \
+-e HATH_CLIENT_ID=輸入你的HATH ID \
+-e HATH_CLIENT_KEY=輸入你的HATH KEY \
 -e UMASK=000 \
 cloverdefa/hath:latest
 ```
 
-你也能夠使用docker-compose來運作容器:   
+使用docker-compose來運作容器:   
 
 ### docker-compose.yml範例    
 ```
@@ -37,7 +37,7 @@ services:
     image: cloverdefa/hath:latest   
     restart: unless-stopped   
     network_mode: host   
-    user: ${ID}  #  使用 .env 內設定的 UID:GID   
+    user: '${UID}:${GID}'   
     volumes:   
       - ./cache:/hath/cache   
       - ./data:/hath/data   
@@ -45,18 +45,17 @@ services:
       - ./log:/hath/log   
       - ./tmp:/hath/tmp   
     environment:   
-      HATH_CLIENT_ID: ${HATH_CLIENT_ID} # 使用 .env 內設定的 H@H Client ID   
-      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY} # 使用 .env 內設定的 H@H Client KEY   
+      HATH_CLIENT_ID: ${HATH_CLIENT_ID}   
+      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY}   
       UMASK: '000'   
       TZ: 'Asia/Taipei' # 設定主機所在時區   
 ```
 
-如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY  
+建立.env檔案存放ID及KEY
 ### .env(範例)   
 ```
-ID: 1000:100  #  設定你的 UID:GID  
-HATH_CLIENT_ID: 00000    #  設定你的 H@H client id   
-HATH_CLIENT_KEY: aaabbbccc    #  設定你的 H@H client key   
+HATH_CLIENT_ID: ‘ID’    #  修改ID為你的 H@H client id   
+HATH_CLIENT_KEY: ‘KEY’    #  修改KEY為你的 H@H client key   
 ```
 變更.env檔案權限   
 chmod 600 .env   

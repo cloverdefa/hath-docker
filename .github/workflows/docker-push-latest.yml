@@ -3,10 +3,10 @@ name: ci
 on:
   push:
     branches:
-      - "latest"
+      - "main"
 
 env:
-  IMAGE_VERSION: 0.2.7
+  IMAGE_VERSION: 0.2.8
 
 jobs:
   docker:

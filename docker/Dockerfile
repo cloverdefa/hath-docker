@@ -11,7 +11,7 @@ RUN apk add --no-cache wget unzip \
 FROM amazoncorretto:8-alpine3.19-jre
 LABEL maintainer="cloverdefa<jackie@dast.tw>"
 
-RUN mkdir /hath
+WORKDIR /hath
 
 COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
 COPY /start/run.sh /hath/
