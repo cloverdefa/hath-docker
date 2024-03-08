@@ -8,7 +8,7 @@ hath-docker
 H@H客戶端版本 : 1.6.2   
    
 ### Usage  
-執行以下指令來運作容器:
+使用docker來運作容器:
 ```
 docker run \
 --name hath \
@@ -25,7 +25,7 @@ docker run \
 cloverdefa/hath:latest
 ```
 
-你也能夠使用docker-compose來運作容器:   
+使用docker-compose來運作容器:   
 
 ### docker-compose.yml範例    
 ```
@@ -51,12 +51,11 @@ services:
       TZ: 'Asia/Taipei' # 設定主機所在時區   
 ```
 
-如果你使用docker-compose來運作容器，推薦你建立.env檔案來保存你的ID以及KEY  
+建立.env檔案存放ID及KEY
 ### .env(範例)   
 ```
-ID: 1000:100  #  設定你的 UID:GID  
-HATH_CLIENT_ID: 00000    #  設定你的 H@H client id   
-HATH_CLIENT_KEY: aaabbbccc    #  設定你的 H@H client key   
+HATH_CLIENT_ID: ‘ID’    #  修改ID為你的 H@H client id   
+HATH_CLIENT_KEY: ‘KEY’    #  修改KEY為你的 H@H client key   
 ```
 變更.env檔案權限   
 chmod 600 .env   
