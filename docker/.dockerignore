@@ -4,6 +4,7 @@
 .gitignore
 README.md
 SECURITY.md
+LICENSE.md
 
 # Dockerfile
 docker
