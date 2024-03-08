@@ -13,12 +13,12 @@ H@H客戶端版本 : 1.6.2
 docker run \
 --name hath \
 --net host \
---user <你的UID>:<你的GID> \
--v /path/to/your/hath/cache:/hath/cache \
--v /path/to/your/hath/data:/hath/data \ 
--v /path/to/your/hath/download>:/hath/download \
--v /path/to/your/hath/log:/hath/log \
--v /path/to/your/hath/tmp:/hath/tmp \
+--user ${UID}:${GID} \
+-v /本地cache路徑:/hath/cache \
+-v /本地data路徑:/hath/data \ 
+-v /本地download路徑:/hath/download \
+-v /本地log路徑:/hath/log \
+-v /本地tmp路徑:/hath/tmp \
 -e HATH_CLIENT_ID=<輸入你的HATH ID> \
 -e HATH_CLIENT_KEY=<輸入你的HATH KEY> \
 -e UMASK=000 \
