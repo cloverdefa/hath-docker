@@ -37,7 +37,7 @@ services:
     image: cloverdefa/hath:latest   
     restart: unless-stopped   
     network_mode: host   
-    user: ${ID}  #  使用 .env 內設定的 UID:GID   
+    user: '${UID}:${GID}'   
     volumes:   
       - ./cache:/hath/cache   
       - ./data:/hath/data   
