@@ -45,8 +45,8 @@ services:
       - ./log:/hath/log   
       - ./tmp:/hath/tmp   
     environment:   
-      HATH_CLIENT_ID: ${HATH_CLIENT_ID} # 使用 .env 內設定的 H@H Client ID   
-      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY} # 使用 .env 內設定的 H@H Client KEY   
+      HATH_CLIENT_ID: ${HATH_CLIENT_ID}   
+      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY}   
       UMASK: '000'   
       TZ: 'Asia/Taipei' # 設定主機所在時區   
 ```
