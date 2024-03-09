@@ -14,7 +14,8 @@ LABEL maintainer="cloverdefa<jackie@dast.tw>"
 WORKDIR /hath
 
 COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
-RUN cp /start/run.sh /hath/ && chmod +x /hath/run.sh
+COPY /start/run.sh /hath/
+RUN chmod +x /hath/run.sh
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
