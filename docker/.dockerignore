@@ -2,9 +2,9 @@
 .github
 .git
 .gitignore
-README.md
 SECURITY.md
 LICENSE.md
+README.md
 
 # Dockerfile
 docker
