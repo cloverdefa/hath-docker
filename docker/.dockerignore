@@ -19,5 +19,6 @@ docker-compose*
 *.code-workspace
 
 # 忽略資料夾
-*/example
-*/.vscode
+example
+.vscode
+temp
