@@ -2,9 +2,9 @@
 .github
 .git
 .gitignore
-README.md
 SECURITY.md
 LICENSE.md
+README.md
 
 # Dockerfile
 docker
@@ -19,5 +19,6 @@ docker-compose*
 *.code-workspace
 
 # 忽略資料夾
-*/example
-*/.vscode
+example
+.vscode
+temp

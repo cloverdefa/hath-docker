@@ -29,31 +29,40 @@ cloverdefa/hath:latest
 
 ### docker-compose.yml範例    
 ```
-version: "3.9"   
-   
-services:   
-  hath:   
-    container_name: hath   
-    image: cloverdefa/hath:latest   
-    restart: unless-stopped   
-    network_mode: host   
-    user: '${UID}:${GID}'   
-    volumes:   
-      - ./cache:/hath/cache   
-      - ./data:/hath/data   
-      - ./download:/hath/download   
-      - ./log:/hath/log   
-      - ./tmp:/hath/tmp   
-    environment:   
-      HATH_CLIENT_ID: ${HATH_CLIENT_ID}   
-      HATH_CLIENT_KEY: ${HATH_CLIENT_KEY}   
-      UMASK: '000'   
-      TZ: 'Asia/Taipei' # 設定主機所在時區   
+version: "3.9"
+
+services:
+  hath:
+    container_name: hath
+    image: cloverdefa/hath:latest
+    restart: unless-stopped
+    networks:
+      - hath-networks
+    prots:
+      - 12345:12345 # 修改為HATH設定PORT
+    user: ${ID} # .env內ID:設定UID及GID
+    volumes:
+      - ./cache:/hath/cache
+      - ./data:/hath/data
+      - ./download:/hath/download
+      - ./log:/hath/log
+      - ./tmp:/hath/tmp
+    environment:
+      # 編輯同路徑資料夾下的.env檔案來設定ID及KEY   
+      HATH_CLIENT_ID: $(HATH_CLIENT_ID)
+      HATH_CLIENT_KEY: $(HATH_CLIENT_KEY)
+      UMASK: '000'
+      TZ: 'Asia/Taipei' # 設定主機所在時區
+
+netwroks:
+  hath-networks:
+    name: "hath-networks"
 ```
 
 建立.env檔案存放ID及KEY
 ### .env(範例)   
 ```
+ID: 'UID:GID'
 HATH_CLIENT_ID: ‘ID’    #  修改ID為你的 H@H client id   
 HATH_CLIENT_KEY: ‘KEY’    #  修改KEY為你的 H@H client key   
 ```
