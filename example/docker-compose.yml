@@ -8,7 +8,7 @@ services:
     networks:
       - hath-networks
     prots:
-      - 12345:12345 # 修改為HATH設定PORT
+      - 12345:12345 # 修改HATH設定PORT
     user: ${ID} # .env內ID:設定UID及GID
     volumes:
       - ./cache:/hath/cache
@@ -17,11 +17,11 @@ services:
       - ./log:/hath/log
       - ./tmp:/hath/tmp
     environment:
-      # 編輯同路徑資料夾下的.env檔案來設定ID及KEY   
+      # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
       HATH_CLIENT_ID: $(HATH_CLIENT_ID)
       HATH_CLIENT_KEY: $(HATH_CLIENT_KEY)
-      UMASK: '000'
-      TZ: 'Asia/Taipei' # 設定主機所在時區
+      UMASK: "000"
+      TZ: "Asia/Taipei" # 設定主機所在時區
 
 netwroks:
   hath-networks:

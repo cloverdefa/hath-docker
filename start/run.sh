@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/usr/bin/env ash
 
 # 設定錯誤則立即退出
 set -e
@@ -13,7 +13,6 @@ fi
 
 # 設定啟動參數及資料夾路徑
 exec java -jar /hath/HentaiAtHome.jar \
-    --disable_bwm                     \
     --cache-dir=/hath/cache           \
     --data-dir=/hath/data             \
     --download-dir=/hath/download     \
