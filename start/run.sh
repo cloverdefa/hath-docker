@@ -9,7 +9,7 @@ set -e
 
 # 如果 client_login 檔案不存在，則創建並寫入內容
 if [ ! -f /hath/data/client_login ]; then
-	printf "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >>/hath/data/client_login
+	echo "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >/hath/data/client_login
 fi
 
 # 設定啟動參數及資料夾路徑
