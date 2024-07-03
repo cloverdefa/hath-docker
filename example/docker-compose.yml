@@ -1,27 +1,27 @@
-version: "3.9"
-
+---
 services:
   hath:
-    container_name: hath
-    image: cloverdefa/hath:latest
-    restart: unless-stopped
+    container_name: "hath"
+    image: "cloverdefa/hath:latest"
+    restart: "unless-stopped"
     networks:
-      - hath-networks
+      - "hath-networks"
     prots:
-      - 12345:12345 # 修改HATH設定PORT
-    user: ${ID} # .env內ID:設定UID及GID
+      - "12345:12345" # 修改HATH設定PORT
+    user: "${ID}" # .env內ID:設定UID及GID
     volumes:
-      - ./cache:/hath/cache
-      - ./data:/hath/data
-      - ./download:/hath/download
-      - ./log:/hath/log
-      - ./tmp:/hath/tmp
+      - "./cache:/hath/cache"
+      - "./data:/hath/data"
+      - "./download:/hath/download"
+      - "./log:/hath/log"
+      - "./tmp:/hath/tmp"
     environment:
       # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
-      HATH_CLIENT_ID: $(HATH_CLIENT_ID)
-      HATH_CLIENT_KEY: $(HATH_CLIENT_KEY)
+      HATH_CLIENT_ID: "$(HATH_CLIENT_ID)"
+      HATH_CLIENT_KEY: "$(HATH_CLIENT_KEY)"
       UMASK: "000"
       TZ: "Asia/Taipei" # 設定主機所在時區
+    env_file: "./.env"
 
 netwroks:
   hath-networks:
