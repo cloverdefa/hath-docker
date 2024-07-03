@@ -51,10 +51,11 @@ services:
       - "./tmp:/hath/tmp"
     environment:
       # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
-      HATH_CLIENT_ID: "$(HATH_CLIENT_ID)"
-      HATH_CLIENT_KEY: "$(HATH_CLIENT_KEY)"
+      HATH_CLIENT_ID: "${HATH_CLIENT_ID}"
+      HATH_CLIENT_KEY: "${HATH_CLIENT_KEY}"
       UMASK: "000"
       TZ: "Asia/Taipei" # 設定主機所在時區
+    env_file: "./.env"
 
 netwroks:
   hath-networks:
