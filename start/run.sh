@@ -1,9 +1,6 @@
 #!/usr/bin/env ash
 # shellcheck shell=dash
 
-# 設定錯誤則立即退出
-set -e
-
 # 設定適當的 umask
 [ "${UMASK:-UNSET}" != "UNSET" ] && umask "$UMASK"
 
