@@ -6,6 +6,7 @@
 
 # 如果 client_login 檔案不存在，則創建並寫入內容
 login_path="/hath/data/client_login"
+
 if [ ! -f "$login_path" ]; then
   echo "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >"$login_path"
 fi
