@@ -5,7 +5,7 @@ ARG HATH_VERSION="1.6.3"
 RUN apk add --no-cache wget unzip \
     && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
     && unzip HentaiAtHome_$HATH_VERSION.zip -d /tmp \
-    && [ -f "/tmp/HentaiAtHome.jar" ] || exit 1
+    && [ -f "/tmp/HentaiAtHome.jar" ] || exit 1 
 
 # 第二階段
 FROM amazoncorretto:8-alpine3.20-jre
@@ -15,7 +15,7 @@ WORKDIR /hath
 
 COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
 COPY /start/run.sh /hath/
-RUN chmod +x /hath/run.sh
+RUN chmod +x /hath/run.sh 
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
