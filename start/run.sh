@@ -17,11 +17,14 @@ if [ ! -f "$login_path" ]; then
   echo "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >"$login_path"
 fi
 
+proxy_args=""
+[ -n "${PROXY_HOST}" ] && proxy_args="${proxy_args} --image-proxy-host=${PROXY_HOST}"
+[ -n "${PROXY_TYPE}" ] && proxy_args="${proxy_args} --image-proxy-type=${PROXY_TYPE}"
+[ -n "${PROXY_PORT}" ] && proxy_args="${proxy_args} --image-proxy-port=${PROXY_PORT}"
+
 # 設定啟動參數及資料夾路徑
 exec java -jar "/hath/HentaiAtHome.jar" \
-  --image-proxy-host="proxy-host" \
-  --image-proxy-type="proxy-type" \
-  --image-proxy-port="proxy-port" \
+  ${proxy_args} \
   --cache-dir="/hath/cache" \
   --data-dir="/hath/data" \
   --download-dir="/hath/download" \
