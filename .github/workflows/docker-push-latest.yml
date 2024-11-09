@@ -31,4 +31,4 @@ jobs:
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}, cloverdefa/hath:latest
+          tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}
