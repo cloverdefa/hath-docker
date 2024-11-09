@@ -3,7 +3,6 @@ name: ci
 on:
   push:
     branches:
-      - "main"
       - "dev"
 
 env:
@@ -31,4 +30,4 @@ jobs:
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cloverdefa/hath:${{ env.IMAGE_VERSION }}
+          tags: cloverdefa/hath:dev
