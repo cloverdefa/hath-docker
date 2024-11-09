@@ -19,6 +19,9 @@ fi
 
 # 設定啟動參數及資料夾路徑
 exec java -jar "/hath/HentaiAtHome.jar" \
+  --image-proxy-host="proxy-host" \
+  --image-proxy-type="proxy-type" \
+  --image-proxy-port="proxy-port" \
   --cache-dir="/hath/cache" \
   --data-dir="/hath/data" \
   --download-dir="/hath/download" \
