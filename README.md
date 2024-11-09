@@ -16,9 +16,9 @@ docker run \
 --name hath \
 --net host \
 --user ${UID}:${GID} \
---image-proxy-host=<host>  # 非必要選項 proxy hostname or IP
---image-proxy-type=<type>  # 非必要選項 Proxy類型 "socks" 或 "http". 空白則使用預設 "socks"
---image-proxy-port=<port> # 非必要選項 Proxy Port 空白則使用預設為 SOCKS 1080 ，HTTP 8080
+--image-proxy-host=<host> \  # 非必要選項 proxy hostname or IP
+--image-proxy-type=<type> \  # 非必要選項 Proxy類型 "socks" 或 "http". 空白則使用預設 "socks"
+--image-proxy-port=<port> \  # 非必要選項 Proxy Port 空白則使用預設為 SOCKS 1080 ，HTTP 8080
 -v /本地cache路徑:/hath/cache \
 -v /本地data路徑:/hath/data \
 -v /本地download路徑:/hath/download \
