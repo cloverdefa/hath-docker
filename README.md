@@ -63,7 +63,7 @@ services:
       TZ: "Asia/Taipei" # 設定主機所在時區
     env_file: "./.env"
 
-netwroks:
+networks:
   hath-networks:
     name: "hath-networks"
 ```
