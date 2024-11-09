@@ -53,10 +53,10 @@ services:
       - "./log:/hath/log"
       - "./tmp:/hath/tmp"
     environment:
+      proxy-host: "111.222.333.444" # 非必要選項 proxy hostname or IP
+      proxy-type: "socks" # 非必要選項 Proxy類型 "socks" 或 "http". 空白則使用預設 "socks"
+      proxy-port: "1080" # 非必要選項 Proxy Port 空白則使用預設為 SOCKS 1080 ，HTTP 8080
       # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
-      proxy-host:
-      proxy-type:
-      proxy-port:
       HATH_CLIENT_ID: "${HATH_CLIENT_ID}"
       HATH_CLIENT_KEY: "${HATH_CLIENT_KEY}"
       UMASK: "000"
