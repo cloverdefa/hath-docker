@@ -1,6 +1,6 @@
 # 第一階段
 FROM alpine:latest AS download-hath
-ARG HATH_VERSION="1.6.3"
+ARG HATH_VERSION="1.6.4"
 
 RUN apk add --no-cache wget unzip \
     && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
@@ -9,7 +9,7 @@ RUN apk add --no-cache wget unzip \
     && [ -f "/tmp/HentaiAtHome.jar" ]
 
 # 第二階段
-FROM amazoncorretto:8-alpine3.20-jre
+FROM amazoncorretto:23.0.1-alpine
 LABEL maintainer="cloverdefa <jackie@dast.tw>"
 
 WORKDIR /hath
