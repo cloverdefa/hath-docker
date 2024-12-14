@@ -5,7 +5,7 @@ hath-docker
 在Docker容器中執行H@H客戶端
 
 版本 :  
-H@H客戶端版本 : 1.6.3
+H@H客戶端版本 : 1.6.4
 
 ### Usage
 
