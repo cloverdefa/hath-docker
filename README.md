@@ -84,3 +84,13 @@ chmod 600 .env
 ## Docker Hub
 
 https://hub.docker.com/r/cloverdefa/hath
+
+## 貢獻
+歡迎提交 Issue 或 Pull Request！請遵循以下步驟：
+
+## Fork 此專案。
+創建一個新分支：
+提交更改並推送到你的分支。
+發送 Pull Request。
+授權
+此專案基於 MIT 授權條款，詳見 [LICENSE](https://github.com/cloverdefa/hath-docker/blob/main/LICENSE.md) 文件。
