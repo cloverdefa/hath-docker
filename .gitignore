@@ -3,6 +3,7 @@
 *.code-workspace
 .python-version
 .luarc.json
+.DS_Store
 poetry.lock
 pyproject.toml
 lazy-lock.json
@@ -12,7 +13,7 @@ id_rsa
 # 忽略資料夾
 .venv/
 .vscode/
-.mypy_cache
+.mypy_cache/
 build/
 dist/
 
