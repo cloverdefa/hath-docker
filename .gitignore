@@ -1,19 +1,19 @@
 # 忽略檔案
-*.list
 *.code-workspace
-.python-version
-.luarc.json
 .DS_Store
+.luarc.json
+.python-version
+desktop.ini
 poetry.lock
-pyproject.toml
-lazy-lock.json
 id_ed25519
 id_rsa
+lazy-lock.json
+pyproject.toml
 
 # 忽略資料夾
+.mypy_cache/
 .venv/
 .vscode/
-.mypy_cache/
 build/
 dist/
 
