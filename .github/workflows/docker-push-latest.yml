@@ -1,13 +1,11 @@
+---
 name: ci
-
 on:
   push:
     branches:
-      - "main"
-
+      - main
 env:
-  IMAGE_VERSION: 0.4.3
-
+  IMAGE_VERSION: 0.4.4
 jobs:
   docker:
     runs-on: ubuntu-latest

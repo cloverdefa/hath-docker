@@ -9,7 +9,7 @@ RUN apk add --no-cache wget unzip \
     && [ -f "/tmp/HentaiAtHome.jar" ]
 
 # 第二階段
-FROM amazoncorretto:24.0.1-alpine3.21
+FROM amazoncorretto:8u462-alpine3.22-jre
 LABEL maintainer="cloverdefa <jackie@dast.tw>"
 
 WORKDIR /hath
