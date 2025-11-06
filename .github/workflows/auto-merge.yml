@@ -23,5 +23,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           MERGE_LABELS: ""               # 不需要 label
-          MERGE_METHOD: "squash"         # 使用 squash merge
+          MERGE_METHOD: "rebase"         # merge squash rebase
           MERGE_FILTER_AUTHOR: "cloverdefa"  # 只自動合併自己開的 PR
