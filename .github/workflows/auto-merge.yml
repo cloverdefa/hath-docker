@@ -4,30 +4,24 @@ on:
   pull_request:
     types:
       - labeled
-      - unlabeled
       - synchronize
       - opened
-      - edited
-      - ready_for_review
       - reopened
-      - unlocked
+      - ready_for_review
   pull_request_review:
-    types:
-      - submitted
+    types: [submitted]
   check_suite:
-    types:
-      - completed
+    types: [completed]
   status: {}
 
 jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
-      - id: automerge
-        name: automerge
-        uses: "pascalgn/automerge-action@v0.16.4"
+      - name: automerge
+        uses: pascalgn/automerge-action@v0.16.4
         env:
-          GITHUB_TOKEN: "${{ secrets.RELEASE_TOKEN }}"
-          MERGE_LABELS: ""
-          MERGE_FILTER_AUTHOR: "cloverdefa"
-
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          MERGE_LABELS: ""               # 不需要 label
+          MERGE_METHOD: "squash"         # 使用 squash merge
+          MERGE_FILTER_AUTHOR: "cloverdefa"  # 只自動合併自己開的 PR
