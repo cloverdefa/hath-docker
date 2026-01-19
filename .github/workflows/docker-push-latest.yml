@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  IMAGE_VERSION: 0.4.6
+  IMAGE_VERSION: 0.4.7
 jobs:
   docker:
     runs-on: ubuntu-latest
