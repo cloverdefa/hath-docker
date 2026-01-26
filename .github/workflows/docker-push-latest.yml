@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
+      - rc
 env:
-  IMAGE_VERSION: 0.4.7
+  IMAGE_VERSION: 0.4.8
 jobs:
   docker:
     runs-on: ubuntu-latest
