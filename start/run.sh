@@ -1,31 +1,45 @@
-#!/usr/bin/env ash
-# shellcheck shell=dash
+#!/bin/ash
+set -eu
 
-# 確保 HATH_CLIENT_ID 和 HATH_CLIENT_KEY 環境變數已設置
-if [ -z "$HATH_CLIENT_ID" ] || [ -z "$HATH_CLIENT_KEY" ]; then
+# 檢查必要環境變數
+if [ -z "${HATH_CLIENT_ID:-}" ] || [ -z "${HATH_CLIENT_KEY:-}" ]; then
   echo "錯誤：請設置 HATH_CLIENT_ID 和 HATH_CLIENT_KEY 環境變數"
   exit 1
 fi
 
-# 設定適當的 umask
-[ -n "${UMASK:-}" ] && umask "$UMASK"
+# 設定 UMASK（若有）
+case "${UMASK:-}" in
+'') ;;
+[0-7][0-7][0-7]) umask "$UMASK" ;;
+*)
+  echo "錯誤：UMASK 格式錯誤"
+  exit 1
+  ;;
+esac
 
-# 如果 client_login 檔案不存在，則創建並寫入內容
+# 確保資料夾存在
+for dir in cache data download log tmp; do
+  mkdir -p "/hath/$dir"
+done
+
 login_path="/hath/data/client_login"
 
+# 若不存在則建立
 if [ ! -f "$login_path" ]; then
-  echo "${HATH_CLIENT_ID}-${HATH_CLIENT_KEY}" >"$login_path"
+  umask 077
+  printf '%s-%s\n' "$HATH_CLIENT_ID" "$HATH_CLIENT_KEY" >"$login_path"
+  chmod 600 "$login_path"
 fi
 
-# 檢查是否有設定 Proxy 相關參數
-proxy_args=""
-[ -n "${PROXY_HOST}" ] && proxy_args="${proxy_args} --image-proxy-host=${PROXY_HOST}"
-[ -n "${PROXY_TYPE}" ] && proxy_args="${proxy_args} --image-proxy-type=${PROXY_TYPE}"
-[ -n "${PROXY_PORT}" ] && proxy_args="${proxy_args} --image-proxy-port=${PROXY_PORT}"
+# 使用安全方式組合 proxy 參數
+set --
 
-# 設定啟動參數及資料夾路徑
+[ -n "${PROXY_HOST:-}" ] && set -- "$@" "--image-proxy-host=$PROXY_HOST"
+[ -n "${PROXY_TYPE:-}" ] && set -- "$@" "--image-proxy-type=$PROXY_TYPE"
+[ -n "${PROXY_PORT:-}" ] && set -- "$@" "--image-proxy-port=$PROXY_PORT"
+
 exec java -jar "/hath/HentaiAtHome.jar" \
-  ${proxy_args} \
+  "$@" \
   --cache-dir="/hath/cache" \
   --data-dir="/hath/data" \
   --download-dir="/hath/download" \
