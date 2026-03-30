@@ -1,6 +1,6 @@
 # 第一階段
 FROM alpine:latest AS download-hath
-ARG HATH_VERSION="1.6.4"
+ARG HATH_VERSION="1.6.5"
 
 RUN apk add --no-cache wget unzip \
     && wget https://repo.e-hentai.org/hath/HentaiAtHome_$HATH_VERSION.zip \
