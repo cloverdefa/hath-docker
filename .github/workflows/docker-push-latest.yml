@@ -6,7 +6,7 @@ on:
       - main
       - rc
 env:
-  IMAGE_VERSION: 0.5.1
+  IMAGE_VERSION: 0.5.2
 jobs:
   docker:
     runs-on: ubuntu-latest
