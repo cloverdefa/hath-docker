@@ -1,4 +1,6 @@
 #!/bin/ash
+# shellcheck shell=dash
+
 set -eu
 
 # 檢查必要環境變數
