@@ -9,12 +9,12 @@ fi
 
 # 設定 UMASK（若有）
 case "${UMASK:-}" in
-'') ;;
-[0-7][0-7][0-7]) umask "$UMASK" ;;
-*)
-  echo "錯誤：UMASK 格式錯誤"
-  exit 1
-  ;;
+  '') ;;
+  [0-7][0-7][0-7]) umask "$UMASK" ;;
+  *)
+    echo "錯誤：UMASK 格式錯誤"
+    exit 1
+    ;;
 esac
 
 # 確保資料夾存在
@@ -38,7 +38,7 @@ set --
 [ -n "${PROXY_TYPE:-}" ] && set -- "$@" "--image-proxy-type=$PROXY_TYPE"
 [ -n "${PROXY_PORT:-}" ] && set -- "$@" "--image-proxy-port=$PROXY_PORT"
 
-exec java -jar "/hath/HentaiAtHome.jar" \
+exec java ${JAVA_OPTS:-} -jar "/hath/HentaiAtHome.jar" \
   "$@" \
   --cache-dir="/hath/cache" \
   --data-dir="/hath/data" \
