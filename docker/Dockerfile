@@ -8,8 +8,8 @@ RUN apk add --no-cache wget unzip \
     && [ -f "/tmp/HentaiAtHome.jar" ]
 
 # 第二階段
-FROM amazoncorretto:8u492-alpine3.23-jre
-ARG IMAGE_VERSION="0.5.3"
+FROM amazoncorretto:8u502-alpine3.24-jre
+ARG IMAGE_VERSION="0.5.4"
 LABEL maintainer="cloverdefa <jackie@dast.tw>"
 LABEL version="${IMAGE_VERSION}"
 WORKDIR /hath

@@ -4,18 +4,43 @@ on:
     branches:
       - main
       - rc
+
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
+      # 從 Dockerfile 抓出 IMAGE_VERSION
+      # 找不到時 grep 會回傳非 0,搭配預設的 -e/pipefail 讓 step 直接失敗,避免用空版號往下建置
       - name: Extract IMAGE_VERSION from Dockerfile
         id: get_version
         run: |
           VERSION=$(grep -m1 '^ARG IMAGE_VERSION=' docker/Dockerfile | sed -E 's/ARG IMAGE_VERSION="?([^"]*)"?/\1/')
           echo "IMAGE_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # 依分支決定 tag 策略:
+      # main -> 正式版號 + latest
+      # rc   -> 正式版號加上 -rc 後綴 + rc,不會動到 latest
+      - name: Determine image tags
+        id: tags
+        run: |
+          VERSION="${{ steps.get_version.outputs.IMAGE_VERSION }}"
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            TAGS="cloverdefa/hath:${VERSION}
+          cloverdefa/hath:latest
+          cloverdefa/hath:sha-${{ github.sha }}"
+          else
+            TAGS="cloverdefa/hath:${VERSION}-rc
+          cloverdefa/hath:rc
+          cloverdefa/hath:sha-${{ github.sha }}"
+          fi
+          {
+            echo "TAGS<<EOF"
+            echo "$TAGS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -38,6 +63,4 @@ jobs:
           push: true
           build-args: |
             IMAGE_VERSION=${{ steps.get_version.outputs.IMAGE_VERSION }}
-          tags: |
-            cloverdefa/hath:${{ steps.get_version.outputs.IMAGE_VERSION }}
-            cloverdefa/hath:latest
+          tags: ${{ steps.tags.outputs.TAGS }}
