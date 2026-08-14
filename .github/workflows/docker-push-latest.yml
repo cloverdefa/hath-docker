@@ -29,12 +29,10 @@ jobs:
           VERSION="${{ steps.get_version.outputs.IMAGE_VERSION }}"
           if [ "${{ github.ref_name }}" = "main" ]; then
             TAGS="cloverdefa/hath:${VERSION}
-          cloverdefa/hath:latest
-          cloverdefa/hath:sha-${{ github.sha }}"
+          cloverdefa/hath:latest"
           else
             TAGS="cloverdefa/hath:${VERSION}-rc
-          cloverdefa/hath:rc
-          cloverdefa/hath:sha-${{ github.sha }}"
+          cloverdefa/hath:rc"
           fi
           {
             echo "TAGS<<EOF"
