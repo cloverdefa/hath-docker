@@ -1,39 +1,57 @@
-name: ci
+name: Docker
+
 on:
   push:
     branches:
       - main
       - rc
 
+  pull_request:
+    branches:
+      - main
+      - rc
+
+permissions:
+  contents: read
+
 jobs:
   docker:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # 從 Dockerfile 抓出 IMAGE_VERSION
-      # 找不到時 grep 會回傳非 0,搭配預設的 -e/pipefail 讓 step 直接失敗,避免用空版號往下建置
-      - name: Extract IMAGE_VERSION from Dockerfile
+      - name: Extract IMAGE_VERSION
         id: get_version
+        shell: bash
         run: |
-          VERSION=$(grep -m1 '^ARG IMAGE_VERSION=' docker/Dockerfile | sed -E 's/ARG IMAGE_VERSION="?([^"]*)"?/\1/')
+          VERSION=$(sed -nE 's/^ARG IMAGE_VERSION="?([^"]*)"?$/\1/p' docker/Dockerfile | head -n1)
+
+          if [ -z "$VERSION" ]; then
+            echo "::error::IMAGE_VERSION not found in docker/Dockerfile"
+            exit 1
+          fi
+
+          echo "IMAGE_VERSION=$VERSION"
           echo "IMAGE_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
-      # 依分支決定 tag 策略:
-      # main -> 正式版號 + latest
-      # rc   -> 正式版號加上 -rc 後綴 + rc,不會動到 latest
       - name: Determine image tags
         id: tags
+        shell: bash
         run: |
           VERSION="${{ steps.get_version.outputs.IMAGE_VERSION }}"
-          if [ "${{ github.ref_name }}" = "main" ]; then
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            TAGS="cloverdefa/hath:pr-${{ github.event.pull_request.number }}"
+          elif [ "${{ github.ref_name }}" = "main" ]; then
             TAGS="cloverdefa/hath:${VERSION}
           cloverdefa/hath:latest"
           else
             TAGS="cloverdefa/hath:${VERSION}-rc
           cloverdefa/hath:rc"
           fi
+
           {
             echo "TAGS<<EOF"
             echo "$TAGS"
@@ -47,9 +65,10 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
+        if: github.event_name == 'push'
         uses: docker/login-action@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
@@ -58,7 +77,9 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
-          push: true
+          push: ${{ github.event_name == 'push' }}
           build-args: |
             IMAGE_VERSION=${{ steps.get_version.outputs.IMAGE_VERSION }}
           tags: ${{ steps.tags.outputs.TAGS }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
