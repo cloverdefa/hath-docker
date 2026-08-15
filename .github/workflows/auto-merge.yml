@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Enable auto-merge
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOEKN }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
 
         run: |
