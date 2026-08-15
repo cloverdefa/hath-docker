@@ -4,8 +4,15 @@ on:
   push:
     branches:
       - main
+
+  pull_request:
+    branches:
+      - main
+      - rc
+
 env:
   IMAGE_VERSION: 0.5.5
+
 jobs:
   docker:
     runs-on: ubuntu-latest
