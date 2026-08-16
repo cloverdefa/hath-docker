@@ -9,13 +9,13 @@ RUN apk add --no-cache wget unzip \
 
 # 第二階段
 FROM amazoncorretto:8u502-alpine3.24-jre
-ARG IMAGE_VERSION="0.5.5"
+ARG IMAGE_VERSION="0.5.6"
 LABEL maintainer="cloverdefa <jackie@dast.tw>"
 LABEL version="${IMAGE_VERSION}"
 WORKDIR /hath
 COPY --from=download-hath /tmp/HentaiAtHome.jar /hath/
 COPY /start/run.sh /hath/
-RUN chmod +x /hath/run.sh 
+RUN chmod +x /hath/run.sh
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
     CMD pgrep -f "java -jar /hath/HentaiAtHome.jar" || exit 1
