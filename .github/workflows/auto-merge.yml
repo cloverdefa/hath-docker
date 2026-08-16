@@ -6,62 +6,24 @@ on:
       - reopened
       - synchronize
       - ready_for_review
-  pull_request_target:
-    types:
-      - closed          # 有 PR merge 完成後,重新檢查排隊中的 PR
-
 permissions:
   contents: write
   pull-requests: write
-
-concurrency:
-  group: automerge-main   # 同一時間只跑一個,避免 race condition
-  cancel-in-progress: false
-
 jobs:
   automerge:
     if: >
-      (github.event.action != 'closed' &&
-       github.event.pull_request.user.login == 'cloverdefa' &&
-       github.event.pull_request.base.ref == 'main' &&
-       contains(fromJSON('["dev", "rc", "test"]'), github.event.pull_request.head.ref) &&
-       github.event.pull_request.draft == false)
-      ||
-      (github.event.action == 'closed' &&
-       github.event.pull_request.merged == true &&
-       github.event.pull_request.base.ref == 'main')
+      github.event.pull_request.user.login == 'cloverdefa' &&
+      github.event.pull_request.base.ref == 'main' &&
+      contains(fromJSON('["dev", "rc", "test"]'), github.event.pull_request.head.ref) &&
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - name: Find eligible PRs into main
-        id: find
+      - name: Enable auto-merge
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          # 抓所有開啟中、目標為 main、來自 dev/rc/test 的 PR,依編號排序(先開先合併)
-          PRS=$(gh pr list \
-            --base main \
-            --state open \
-            --json number,headRefName,url \
-            --jq '[.[] | select(.headRefName == "dev" or .headRefName == "rc" or .headRefName == "test")] | sort_by(.number)')
-
-          COUNT=$(echo "$PRS" | jq 'length')
-          echo "Eligible PR count: $COUNT"
-
-          if [ "$COUNT" -eq 0 ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          # 只處理排隊中最前面(編號最小)的那個 PR
-          TARGET_URL=$(echo "$PRS" | jq -r '.[0].url')
-          echo "target_url=$TARGET_URL" >> "$GITHUB_OUTPUT"
-          echo "skip=false" >> "$GITHUB_OUTPUT"
-
-      - name: Enable auto-merge for next PR in queue
-        if: steps.find.outputs.skip == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: |
-          gh pr merge "${{ steps.find.outputs.target_url }}" \
+          gh pr merge "$PR_URL" \
+            --repo "${{ github.repository }}" \
             --auto \
             --squash
