@@ -25,6 +25,16 @@ for dir in cache data download log tmp; do
   mkdir -p "/hath/$dir"
 done
 
+# 檢查資料夾是否可寫，避免權限不符時才在 Java 啟動後才失敗
+for dir in cache data download log tmp; do
+  if [ ! -w "/hath/$dir" ]; then
+    echo "錯誤：/hath/$dir 沒有寫入權限"
+    echo "請確認 host 端掛載目錄的擁有者 UID/GID 與 .env 內設定的 ID 一致"
+    echo "可在 host 上執行：sudo chown -R <UID>:<GID> ./cache ./data ./download ./log ./tmp"
+    exit 1
+  fi
+done
+
 login_path="/hath/data/client_login"
 
 # 若不存在則建立（用子殼層隔離 umask，避免影響腳本後續行為）

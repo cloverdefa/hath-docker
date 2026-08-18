@@ -77,6 +77,36 @@ HATH_CLIENT_KEY=KEY     # 修改KEY為你的 H@H client key
 chmod 600 .env
 ```
 
+## 執行身份（UID/GID）說明
+
+容器內建有一個 `hath`（uid/gid 1000）使用者，Dockerfile 預設以此身份執行。
+
+**但透過 docker-compose 啟動時，`user: "${ID}"` 會覆蓋這個預設值**，實際執行身份由
+`.env` 內的 `ID`（格式 `UID:GID`）決定，與 image 內建的 `hath` 使用者無關。
+
+若你在 `.env` 裡：
+- **未設定 `ID`**：實際行為依 docker-compose 版本而異，建議務必明確填寫，不要留空。
+- **設定 `ID=1000:1000`**：等同於使用 image 內建的 `hath`。
+- **設定其他 UID/GID**（例如對齊 host 上某個既有使用者）：容器內程式會以該身份執行，
+  此時**掛載到容器的 volume 目錄擁有者也必須是同一組 UID/GID**（詳見下方「Volume 目錄權限」章節），
+  否則會遇到 `Permission denied`。
+
+若不透過 docker-compose、改用 `docker run` 且未加 `--user` 參數，才會真正使用 image 內建的 `hath`。
+
+## Volume 目錄權限
+
+`docker-compose.yml` 範例使用 bind mount（如 `./cache:/hath/cache`）將 host 端目錄
+掛載進容器。這些目錄的實際存取權限**取決於 host 端目錄本身的擁有者**，與容器內部設定無關。
+
+啟動前請確保 host 端目錄的擁有者，與 `.env` 內 `ID`（UID:GID）一致，例如：
+
+```bash
+mkdir -p cache data download log tmp
+sudo chown -R $(grep '^ID=' .env | cut -d= -f2 | tr ':' ' ') cache data download log tmp
+```
+
+若擁有者不一致，容器會因為沒有寫入權限而無法啟動，`run.sh` 啟動時會印出對應錯誤提示。
+
 ## Docker Hub
 https://hub.docker.com/r/cloverdefa/hath
 

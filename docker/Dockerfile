@@ -17,7 +17,7 @@ LABEL org.opencontainers.image.source="https://github.com/cloverdefa/hath-docker
 RUN addgroup -g 1000 hath && adduser -D -u 1000 -G hath hath
 
 WORKDIR /hath
-COPY --from=download-hath --chown=hath:hath /tmp/HentaiAtHome.jar /hath/
+COPY --from=download-hath --chown=hath:hath --chmod=644 /tmp/HentaiAtHome.jar /hath/
 COPY --chown=hath:hath --chmod=755 start/run.sh /hath/
 
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]

@@ -7,7 +7,7 @@ services:
       - "hath-networks"
     ports:
       - "12345:12345" # 修改HATH設定PORT
-    user: "${ID}" # .env內ID:設定UID及GID
+    user: "${ID}" # 覆蓋 image 內建的 hath(uid/gid 1000)，實際執行身份以此為準
     volumes:
       - "./cache:/hath/cache"
       - "./data:/hath/data"
