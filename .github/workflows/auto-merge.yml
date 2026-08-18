@@ -25,5 +25,5 @@ jobs:
         run: |
           gh pr merge "$PR_URL" \
             --repo "${{ github.repository }}" \
-            --auto \
+            --admin \
             --squash
