@@ -1,6 +1,5 @@
 #!/bin/ash
 # shellcheck shell=dash
-
 set -eu
 
 # 檢查必要環境變數
@@ -12,7 +11,9 @@ fi
 # 設定 UMASK（若有）
 case "${UMASK:-}" in
   '') ;;
-  [0-7][0-7][0-7]) umask "$UMASK" ;;
+  [0-7] | [0-7][0-7] | [0-7][0-7][0-7] | [0-7][0-7][0-7][0-7])
+    umask "$UMASK"
+    ;;
   *)
     echo "錯誤：UMASK 格式錯誤"
     exit 1
@@ -26,16 +27,17 @@ done
 
 login_path="/hath/data/client_login"
 
-# 若不存在則建立
+# 若不存在則建立（用子殼層隔離 umask，避免影響腳本後續行為）
 if [ ! -f "$login_path" ]; then
-  umask 077
-  printf '%s-%s\n' "$HATH_CLIENT_ID" "$HATH_CLIENT_KEY" >"$login_path"
+  (
+    umask 077
+    printf '%s-%s\n' "$HATH_CLIENT_ID" "$HATH_CLIENT_KEY" >"$login_path"
+  )
   chmod 600 "$login_path"
 fi
 
 # 使用安全方式組合 proxy 參數
 set --
-
 [ -n "${PROXY_HOST:-}" ] && set -- "$@" "--image-proxy-host=$PROXY_HOST"
 [ -n "${PROXY_TYPE:-}" ] && set -- "$@" "--image-proxy-type=$PROXY_TYPE"
 [ -n "${PROXY_PORT:-}" ] && set -- "$@" "--image-proxy-port=$PROXY_PORT"
