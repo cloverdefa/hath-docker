@@ -2,7 +2,6 @@
 hath-docker
 在Docker容器中執行H@H客戶端
 
-版本 : <!-- 請填入本專案版本號，例如 v1.0.0 -->
 H@H客戶端版本 : 1.6.5
 
 ### Usage
@@ -20,7 +19,7 @@ docker run \
   -v /本地tmp路徑:/hath/tmp \
   -e HATH_CLIENT_ID=輸入你的HATH_ID \
   -e HATH_CLIENT_KEY=輸入你的HATH_KEY \
-  -e UMASK=000 \
+  -e UMASK=022 \
   -e PROXY_HOST=<host> \  # 非必要選項 proxy hostname or IP
   -e PROXY_TYPE=<type> \  # 非必要選項 Proxy類型 "socks" 或 "http"，空白則使用預設 "socks"
   -e PROXY_PORT=<port> \  # 非必要選項 Proxy Port，空白則使用預設為 SOCKS 1080，HTTP 8080
@@ -55,7 +54,7 @@ services:
       # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
       HATH_CLIENT_ID: "${HATH_CLIENT_ID}"
       HATH_CLIENT_KEY: "${HATH_CLIENT_KEY}"
-      UMASK: "000"
+      UMASK: "022"
       TZ: "Asia/Taipei" # 設定主機所在時區
     env_file: "./.env"
 networks:
