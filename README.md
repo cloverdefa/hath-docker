@@ -1,39 +1,35 @@
 # hath-docker
-
 hath-docker
-
 在Docker容器中執行H@H客戶端
 
-版本 :  
+版本 : <!-- 請填入本專案版本號，例如 v1.0.0 -->
 H@H客戶端版本 : 1.6.5
 
 ### Usage
 
 使用docker來運作容器:
-
 ```
 docker run \
---name hath \
---net host \
---user ${UID}:${GID} \
---image-proxy-host=<host> \  # 非必要選項 proxy hostname or IP
---image-proxy-type=<type> \  # 非必要選項 Proxy類型 "socks" 或 "http". 空白則使用預設 "socks"
---image-proxy-port=<port> \  # 非必要選項 Proxy Port 空白則使用預設為 SOCKS 1080 ，HTTP 8080
--v /本地cache路徑:/hath/cache \
--v /本地data路徑:/hath/data \
--v /本地download路徑:/hath/download \
--v /本地log路徑:/hath/log \
--v /本地tmp路徑:/hath/tmp \
--e HATH_CLIENT_ID=輸入你的HATH ID \
--e HATH_CLIENT_KEY=輸入你的HATH KEY \
--e UMASK=000 \
-cloverdefa/hath:latest
+  --name hath \
+  --net host \
+  --user ${UID}:${GID} \
+  -v /本地cache路徑:/hath/cache \
+  -v /本地data路徑:/hath/data \
+  -v /本地download路徑:/hath/download \
+  -v /本地log路徑:/hath/log \
+  -v /本地tmp路徑:/hath/tmp \
+  -e HATH_CLIENT_ID=輸入你的HATH_ID \
+  -e HATH_CLIENT_KEY=輸入你的HATH_KEY \
+  -e UMASK=000 \
+  -e PROXY_HOST=<host> \  # 非必要選項 proxy hostname or IP
+  -e PROXY_TYPE=<type> \  # 非必要選項 Proxy類型 "socks" 或 "http"，空白則使用預設 "socks"
+  -e PROXY_PORT=<port> \  # 非必要選項 Proxy Port，空白則使用預設為 SOCKS 1080，HTTP 8080
+  cloverdefa/hath:latest
 ```
 
 使用docker-compose來運作容器:
 
 ### docker-compose.yml範例
-
 ```
 ---
 services:
@@ -43,7 +39,7 @@ services:
     restart: "unless-stopped"
     networks:
       - "hath-networks"
-    prots:
+    ports:
       - "12345:12345" # 修改為HATH設定PORT
     user: "${ID}" # .env內ID:設定UID及GID
     volumes:
@@ -62,7 +58,6 @@ services:
       UMASK: "000"
       TZ: "Asia/Taipei" # 設定主機所在時區
     env_file: "./.env"
-
 networks:
   hath-networks:
     name: "hath-networks"
@@ -71,28 +66,34 @@ networks:
 建立.env檔案存放ID及KEY
 
 ### .env(範例)
-
 ```
-ID: "UID:GID"
-HATH_CLIENT_ID: "ID"    #  修改ID為你的 H@H client id
-HATH_CLIENT_KEY: ‘KEY’    #  修改KEY為你的 H@H client key
+ID=UID:GID
+HATH_CLIENT_ID=ID       # 修改ID為你的 H@H client id
+HATH_CLIENT_KEY=KEY     # 修改KEY為你的 H@H client key
 ```
 
-變更.env檔案權限  
+變更.env檔案權限
+```
 chmod 600 .env
+```
 
 ## Docker Hub
-
 https://hub.docker.com/r/cloverdefa/hath
 
 ## 貢獻
-
 歡迎提交 Issue 或 Pull Request！請遵循以下步驟：
 
-## Fork 此專案。
+1. Fork 此專案。
+2. 建立一個新分支：
+   ```
+   git checkout -b feature/你的功能名稱
+   ```
+3. 提交更改並推送到你的分支：
+   ```
+   git commit -m "說明你的修改內容"
+   git push origin feature/你的功能名稱
+   ```
+4. 至 GitHub 發送 Pull Request。
 
-創建一個新分支：
-提交更改並推送到你的分支。
-發送 Pull Request。
-授權
-此專案基於 MIT 授權條款，詳見[MIT License](https://github.com/cloverdefa/hath-docker/blob/main/LICENSE.md) 授權條款。
+## 授權
+此專案基於 MIT 授權條款，詳見 [MIT License](https://github.com/cloverdefa/hath-docker/blob/main/LICENSE.md) 授權條款。
