@@ -2,9 +2,8 @@ name: Docker
 
 on:
   push:
-    branches:
-      - main
-      - test
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -17,44 +16,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Extract IMAGE_VERSION
-        id: get_version
+      - name: Determine version
+        id: version
         shell: bash
         run: |
-          VERSION=$(sed -nE 's/^ARG IMAGE_VERSION="?([^"]*)"?$/\1/p' docker/Dockerfile | head -n1)
+          VERSION="${GITHUB_REF_NAME#v}"
 
-          if [ -z "$VERSION" ]; then
-            echo "::error::IMAGE_VERSION not found in docker/Dockerfile"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version tag: $GITHUB_REF_NAME"
             exit 1
           fi
 
-          echo "IMAGE_VERSION=$VERSION"
           echo "IMAGE_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Determine image tags
-        id: tags
-        shell: bash
-        run: |
-          VERSION="${{ steps.get_version.outputs.IMAGE_VERSION }}"
-
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            TAGS="cloverdefa/hath:${VERSION}
-            cloverdefa/hath:latest"
-
-          elif [ "${{ github.ref_name }}" = "test" ]; then
-            TAGS="cloverdefa/hath:${VERSION}-test
-            cloverdefa/hath:test"
-
-          else
-            echo "::error::Unexpected ref_name: ${{ github.ref_name }}"
-            exit 1
-          fi
-
-          {
-            echo "TAGS<<EOF"
-            echo "$TAGS"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -76,7 +49,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            IMAGE_VERSION=${{ steps.get_version.outputs.IMAGE_VERSION }}
-          tags: ${{ steps.tags.outputs.TAGS }}
+            IMAGE_VERSION=${{ steps.version.outputs.IMAGE_VERSION }}
+          tags: |
+            cloverdefa/hath:${{ steps.version.outputs.IMAGE_VERSION }}
+            cloverdefa/hath:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
