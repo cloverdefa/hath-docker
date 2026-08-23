@@ -1,4 +1,5 @@
 name: Release
+
 on:
   pull_request:
     types:
@@ -18,42 +19,125 @@ jobs:
         github.event.pull_request.head.ref == 'test' ||
         github.event.pull_request.head.ref == 'dev'
       )
+
     runs-on: ubuntu-latest
+
     steps:
+      # ==============================================================
+      # Checkout main
+      # ==============================================================
+
       - name: Checkout main
         uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      # ==============================================================
+      # Get next version
+      # ==============================================================
+
       - name: Get next version
         id: version
         shell: bash
         run: |
-          git fetch --tags
+          set -euo pipefail
+
+          git fetch --tags --force
+
+          # ----------------------------------------------------------
+          # Find latest semantic version tag
+          #
+          # Example:
+          #   v0.1.0
+          #   v0.1.1
+          #   v1.0.0
+          #   v1.2.3
+          # ----------------------------------------------------------
+
           latest_tag=$(
             git tag --list 'v*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
-            sed 's/^v//' |
             sort -V |
-            tail -n 1
+            tail -n 1 || true
           )
+
+          # ----------------------------------------------------------
+          # Determine release type
+          #
+          # Default:
+          #   patch
+          #
+          # To upgrade minor / major, change RELEASE_TYPE below.
+          # ----------------------------------------------------------
+
+          release_type="patch"
+
+          # ----------------------------------------------------------
+          # Calculate next version
+          # ----------------------------------------------------------
+
           if [ -z "$latest_tag" ]; then
-            version="0.1.0"
+            major=0
+            minor=1
+            patch=0
           else
             version="${latest_tag#v}"
+
             IFS='.' read -r major minor patch <<< "$version"
-            patch=$((patch + 1))
-            version="${major}.${minor}.${patch}"
+
+            case "$release_type" in
+              patch)
+                patch=$((patch + 1))
+                ;;
+
+              minor)
+                minor=$((minor + 1))
+                patch=0
+                ;;
+
+              major)
+                major=$((major + 1))
+                minor=0
+                patch=0
+                ;;
+
+              *)
+                echo "::error::Invalid release type: $release_type"
+                exit 1
+                ;;
+            esac
           fi
+
+          version="${major}.${minor}.${patch}"
           tag="v${version}"
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+          # ----------------------------------------------------------
+          # Prevent duplicate tag
+          # ----------------------------------------------------------
+
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "::error::Tag $tag already exists."
+            exit 1
+          fi
+
+          echo "Latest tag: ${latest_tag:-none}"
+          echo "Release type: $release_type"
           echo "Next version: $version"
           echo "Next tag: $tag"
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      # ==============================================================
+      # Create GitHub Release
+      # ==============================================================
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}   # 用 PAT,才能觸發 Docker.yml 的 tags: v* 事件
+          token: ${{ secrets.RELEASE_TOKEN }}
           tag_name: ${{ steps.version.outputs.tag }}
           target_commitish: main
           name: v${{ steps.version.outputs.version }}
