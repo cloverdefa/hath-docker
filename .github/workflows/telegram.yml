@@ -3,15 +3,17 @@ name: Telegram Notification
 on:
   workflow_run:
     workflows:
-      - Docker
+      - Release
     types:
       - completed
-    branches:
-      - main
+
+permissions:
+  contents: read
 
 jobs:
   notify:
     name: Send Telegram Notification
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -21,14 +23,13 @@ jobs:
           to: ${{ secrets.TELEGRAM_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            🚀 新的韌體 Release 已建立
+            🚀 新的 Release 已建立
 
             📦 儲存庫
             ${{ github.repository }}
 
             🏷️ 版本
-            ${{ steps.version.outputs.tag }}
+            ${{ github.event.workflow_run.head_branch }}
 
             🔗 查看 Release
-            https://github.com/${{ github.repository }}/releases/latest            
-
+            https://github.com/${{ github.repository }}/releases/latest
