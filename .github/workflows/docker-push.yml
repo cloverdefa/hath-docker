@@ -32,10 +32,11 @@ jobs:
 
           elif [[ "${GITHUB_REF_NAME}" == "test" ]]; then
             VERSION=$(
-              git tag --list 'v[0-9]*.[0-9]*.[0-9]*' |
+              git tag --list 'v*' |
+              grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
+              sed 's/^v//' |
               sort -V |
-              tail -n 1 |
-              sed 's/^v//'
+              tail -n 1
             )
 
             if [ -z "$VERSION" ]; then
