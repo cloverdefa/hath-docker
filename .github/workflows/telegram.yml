@@ -1,0 +1,34 @@
+name: Telegram Notification
+
+on:
+  workflow_run:
+    workflows:
+      - Docker
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  notify:
+    name: Send Telegram Notification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Telegram notification
+        uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🚀 新的韌體 Release 已建立
+
+            📦 儲存庫
+            ${{ github.repository }}
+
+            🏷️ 版本
+            ${{ steps.version.outputs.tag }}
+
+            🔗 查看 Release
+            https://github.com/${{ github.repository }}/releases/latest            
+
