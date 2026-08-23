@@ -20,9 +20,6 @@ docker run \
   -e HATH_CLIENT_ID=輸入你的HATH_ID \
   -e HATH_CLIENT_KEY=輸入你的HATH_KEY \
   -e UMASK=022 \
-  -e PROXY_HOST=<host> \  # 非必要選項 proxy hostname or IP
-  -e PROXY_TYPE=<type> \  # 非必要選項 Proxy類型 "socks" 或 "http"，空白則使用預設 "socks"
-  -e PROXY_PORT=<port> \  # 非必要選項 Proxy Port，空白則使用預設為 SOCKS 1080，HTTP 8080
   cloverdefa/hath:latest
 ```
 
@@ -48,9 +45,6 @@ services:
       - "./log:/hath/log"
       - "./tmp:/hath/tmp"
     environment:
-      PROXY_HOST: "111.222.333.444"   # 非必要選項 proxy hostname or IP
-      PROXY_TYPE: "socks"             # 非必要選項 Proxy 類型 "socks" 或 "http". 空白則使用預設 "socks"
-      PROXY_PORT: "1080"              # 非必要選項 Proxy Port，空白則預設 SOCKS 為 1080，HTTP 為 8080
       # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
       HATH_CLIENT_ID: "${HATH_CLIENT_ID}"
       HATH_CLIENT_KEY: "${HATH_CLIENT_KEY}"
