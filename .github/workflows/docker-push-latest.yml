@@ -16,37 +16,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Determine image tags
-        id: tags
+      - name: Determine version
+        id: version
         shell: bash
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${GITHUB_REF_NAME#v}"
 
-            TAGS="cloverdefa/hath:${VERSION}
-            cloverdefa/hath:latest"
-
-          elif [[ "${GITHUB_REF_NAME}" == "test" ]]; then
-            VERSION="test"
-
-            TAGS="cloverdefa/hath:test"
-
-          elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
-            echo "::error::main branch should be built from a release tag"
-            exit 1
-
-          else
-            echo "::error::Unexpected ref: ${GITHUB_REF}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version tag: $GITHUB_REF_NAME"
             exit 1
           fi
 
-          echo "IMAGE_VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
-
-          {
-            echo "TAGS<<EOF"
-            echo "$TAGS"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          echo "IMAGE_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -68,7 +49,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            IMAGE_VERSION=${{ steps.tags.outputs.IMAGE_VERSION }}
-          tags: ${{ steps.tags.outputs.TAGS }}
+            IMAGE_VERSION=${{ steps.version.outputs.IMAGE_VERSION }}
+          tags: |
+            cloverdefa/hath:${{ steps.version.outputs.IMAGE_VERSION }}
+            cloverdefa/hath:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
