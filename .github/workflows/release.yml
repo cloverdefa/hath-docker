@@ -1,5 +1,4 @@
 name: Release
-
 on:
   pull_request:
     types:
@@ -19,22 +18,18 @@ jobs:
         github.event.pull_request.head.ref == 'test' ||
         github.event.pull_request.head.ref == 'dev'
       )
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0
-
       - name: Get next version
         id: version
         shell: bash
         run: |
           git fetch --tags
-
           latest_tag=$(
             git tag --list 'v*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
@@ -42,30 +37,23 @@ jobs:
             sort -V |
             tail -n 1
           )
-
           if [ -z "$latest_tag" ]; then
             version="0.1.0"
           else
             version="${latest_tag#v}"
-
             IFS='.' read -r major minor patch <<< "$version"
-
             patch=$((patch + 1))
-
             version="${major}.${minor}.${patch}"
           fi
-
           tag="v${version}"
-
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-
           echo "Next version: $version"
           echo "Next tag: $tag"
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.RELEASE_TOKEN }}   # 用 PAT,才能觸發 Docker.yml 的 tags: v* 事件
           tag_name: ${{ steps.version.outputs.tag }}
           target_commitish: main
           name: v${{ steps.version.outputs.version }}
