@@ -2,9 +2,8 @@ name: Docker
 
 on:
   push:
-    branches:
-      - main
-      - test
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -17,38 +16,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Extract IMAGE_VERSION
-        id: get_version
-        shell: bash
-        run: |
-          VERSION=$(sed -nE 's/^ARG IMAGE_VERSION="?([^"]*)"?$/\1/p' docker/Dockerfile | head -n1)
-
-          if [ -z "$VERSION" ]; then
-            echo "::error::IMAGE_VERSION not found in docker/Dockerfile"
-            exit 1
-          fi
-
-          echo "IMAGE_VERSION=$VERSION"
-          echo "IMAGE_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-
       - name: Determine image tags
         id: tags
         shell: bash
         run: |
-          VERSION="${{ steps.get_version.outputs.IMAGE_VERSION }}"
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
 
-          if [ "${{ github.ref_name }}" = "main" ]; then
             TAGS="cloverdefa/hath:${VERSION}
             cloverdefa/hath:latest"
 
-          elif [ "${{ github.ref_name }}" = "test" ]; then
-            TAGS="cloverdefa/hath:${VERSION}-test
-            cloverdefa/hath:test"
+          elif [[ "${GITHUB_REF_NAME}" == "test" ]]; then
+            VERSION="test"
+
+            TAGS="cloverdefa/hath:test"
+
+          elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "::error::main branch should be built from a release tag"
+            exit 1
 
           else
-            echo "::error::Unexpected ref_name: ${{ github.ref_name }}"
+            echo "::error::Unexpected ref: ${GITHUB_REF}"
             exit 1
           fi
+
+          echo "IMAGE_VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
 
           {
             echo "TAGS<<EOF"
@@ -76,7 +68,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            IMAGE_VERSION=${{ steps.get_version.outputs.IMAGE_VERSION }}
+            IMAGE_VERSION=${{ steps.tags.outputs.IMAGE_VERSION }}
           tags: ${{ steps.tags.outputs.TAGS }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
