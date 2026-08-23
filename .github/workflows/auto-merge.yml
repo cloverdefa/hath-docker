@@ -16,7 +16,7 @@ jobs:
     if: >
       github.event.pull_request.user.login == 'cloverdefa' &&
       github.event.pull_request.base.ref == 'main' &&
-      contains(fromJSON('["test"]'), github.event.pull_request.head.ref) &&
+      github.event.pull_request.head.ref == 'test' &&
       github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
