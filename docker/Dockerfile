@@ -23,21 +23,19 @@ RUN addgroup -g 1000 hath && adduser -D -u 1000 -G hath hath
 
 WORKDIR /hath
 
-COPY --from=download-hath --chown=hath:hath --chmod=644 \
+COPY --from=download-hath \
+    --chown=hath:hath \
+    --chmod=644 \
     /tmp/HentaiAtHome.jar /hath/
 
-COPY --chown=hath:hath --chmod=755 \
+COPY --chown=hath:hath \
+    --chmod=755 \
     start/run.sh /hath/
 
-VOLUME [
-    "/hath/cache",
-    "/hath/data",
-    "/hath/download",
-    "/hath/log",
-    "/hath/tmp"
-]
+VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
 USER hath
+
 STOPSIGNAL SIGTERM
 
 HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
