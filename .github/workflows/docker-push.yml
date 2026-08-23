@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - test
-
     tags:
       - "v*"
 
@@ -65,12 +64,12 @@ jobs:
           CHANNEL="${{ steps.version.outputs.CHANNEL }}"
 
           if [[ "$CHANNEL" == "release" ]]; then
-            TAGS="cloverdefa/hath:${VERSION}
-cloverdefa/hath:latest"
+            TAGS="cloverdefa/hath:${VERSION}"
+            TAGS="${TAGS}"$'\n'"cloverdefa/hath:latest"
 
           elif [[ "$CHANNEL" == "test" ]]; then
-            TAGS="cloverdefa/hath:test-${VERSION}
-cloverdefa/hath:test"
+            TAGS="cloverdefa/hath:test-${VERSION}"
+            TAGS="${TAGS}"$'\n'"cloverdefa/hath:test"
 
           else
             echo "::error::Unknown channel: $CHANNEL"
