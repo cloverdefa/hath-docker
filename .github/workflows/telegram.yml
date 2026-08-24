@@ -24,12 +24,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             🚀 新的 Release 已建立
-
             📦 儲存庫
             ${{ github.repository }}
-
             🏷️ 版本
             ${{ github.event.workflow_run.head_branch }}
-
             🔗 查看 Release
             https://github.com/${{ github.repository }}/releases/latest
