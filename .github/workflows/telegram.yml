@@ -17,6 +17,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get release tag
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(gh release view \
+            --repo "$GITHUB_REPOSITORY" \
+            --json tagName \
+            --jq '.tagName')
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
       - name: Send Telegram notification
         uses: appleboy/telegram-action@v1.0.1
         with:
@@ -27,6 +39,7 @@ jobs:
             📦 儲存庫
             ${{ github.repository }}
             🏷️ 版本
-            ${{ github.event.workflow_run.head_branch }}
+            ${{ steps.release.outputs.tag }}
+
             🔗 查看 Release
             https://github.com/${{ github.repository }}/releases/latest
