@@ -64,28 +64,121 @@ jobs:
           )
 
           # ----------------------------------------------------------
-          # Determine release type
-          #
-          # Default:
-          #   patch
-          #
-          # To upgrade minor / major, change RELEASE_TYPE below.
-          # ----------------------------------------------------------
-
-          release_type="patch"
-
-          # ----------------------------------------------------------
-          # Calculate next version
+          # No existing release
           # ----------------------------------------------------------
 
           if [ -z "$latest_tag" ]; then
             major=0
             minor=1
             patch=0
+
+            release_type="initial"
+
           else
             version="${latest_tag#v}"
 
             IFS='.' read -r major minor patch <<< "$version"
+
+            # --------------------------------------------------------
+            # Determine release type from commits since latest release
+            #
+            # Priority:
+            #
+            #   MAJOR > MINOR > PATCH
+            #
+            # MAJOR:
+            #   feat!: ...
+            #   fix!: ...
+            #   refactor!: ...
+            #   BREAKING CHANGE: ...
+            #
+            # MINOR:
+            #   feat: ...
+            #
+            # PATCH:
+            #   fix: ...
+            #
+            # No release:
+            #   docs: ...
+            #   chore: ...
+            #   refactor: ...
+            #   test: ...
+            #   style: ...
+            #   ci: ...
+            # --------------------------------------------------------
+
+            release_type="none"
+
+            echo "Latest tag: $latest_tag"
+            echo "Analyzing commits since $latest_tag..."
+
+            while IFS= read -r commit; do
+              echo "Commit:"
+              echo "$commit"
+
+              # ------------------------------------------------------
+              # MAJOR
+              # ------------------------------------------------------
+
+              if printf '%s\n' "$commit" |
+                grep -Eq '^[a-zA-Z0-9_-]+(\([^)]*\))?!:' ||
+                printf '%s\n' "$commit" |
+                grep -Eq 'BREAKING CHANGE:'; then
+
+                release_type="major"
+                continue
+              fi
+
+              # ------------------------------------------------------
+              # MINOR
+              # ------------------------------------------------------
+
+              if printf '%s\n' "$commit" |
+                grep -Eq '^feat(\([^)]*\))?:'; then
+
+                if [ "$release_type" != "major" ]; then
+                  release_type="minor"
+                fi
+
+                continue
+              fi
+
+              # ------------------------------------------------------
+              # PATCH
+              # ------------------------------------------------------
+
+              if printf '%s\n' "$commit" |
+                grep -Eq '^fix(\([^)]*\))?:'; then
+
+                if [ "$release_type" = "none" ]; then
+                  release_type="patch"
+                fi
+
+                continue
+              fi
+
+            done < <(
+              git log "$latest_tag..HEAD" \
+                --pretty=format:'%s%n%b%n---'
+            )
+
+            echo "Detected release type: $release_type"
+
+            # --------------------------------------------------------
+            # No release required
+            # --------------------------------------------------------
+
+            if [ "$release_type" = "none" ]; then
+              echo "No release required."
+
+              echo "should_release=false" >> "$GITHUB_OUTPUT"
+
+              exit 0
+            fi
+
+            # --------------------------------------------------------
+            # Calculate next version
+            # --------------------------------------------------------
 
             case "$release_type" in
               patch)
@@ -127,6 +220,8 @@ jobs:
           echo "Next version: $version"
           echo "Next tag: $tag"
 
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "release_type=$release_type" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
@@ -135,10 +230,11 @@ jobs:
       # ==============================================================
 
       - name: Create Release
+        if: steps.version.outputs.should_release == 'true'
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
           tag_name: ${{ steps.version.outputs.tag }}
           target_commitish: main
-          name: v${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.tag }}
           generate_release_notes: true
