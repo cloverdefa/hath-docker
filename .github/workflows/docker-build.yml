@@ -12,7 +12,7 @@ on:
   #
   # Images:
   #   cloverdefa/hath:test
-  #   cloverdefa/hath:v0.4.2-test
+  #   cloverdefa/hath:v0.4.x-test
   # ==============================================================
 
   push:
@@ -26,14 +26,14 @@ on:
   #     ↓
   # Release
   #     ↓
-  # v0.4.2
+  # v0.4.x
   #     ↓
   # workflow_run
   #     ↓
   # Docker
   #
   # Images:
-  #   cloverdefa/hath:v0.4.2
+  #   cloverdefa/hath:v0.4.x
   #   cloverdefa/hath:latest
   # ==============================================================
 
@@ -48,18 +48,21 @@ permissions:
 
 jobs:
   docker:
-    # --------------------------------------------------------------
-    # push test:
-    #   always build
+    name: Docker Build
+
+    # ==============================================================
+    # Test:
+    #   push → test
     #
-    # workflow_run:
-    #   only build when Release succeeds
-    # --------------------------------------------------------------
+    # Release:
+    #   workflow_run → Release success
+    # ==============================================================
 
     if: >
       github.event_name == 'push' ||
       (
         github.event_name == 'workflow_run' &&
+        github.event.workflow_run.name == 'Release' &&
         github.event.workflow_run.conclusion == 'success'
       )
 
@@ -76,7 +79,18 @@ jobs:
           fetch-depth: 0
 
       # ==============================================================
-      # Determine version and channel
+      # Fetch tags
+      # ==============================================================
+
+      - name: Fetch tags
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch --tags --force
+
+      # ==============================================================
+      # Determine version
       # ==============================================================
 
       - name: Determine version
@@ -85,8 +99,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          git fetch --tags --force
-
           # ==========================================================
           # TEST BUILD
           #
@@ -94,13 +106,16 @@ jobs:
           #   push → test
           # ==========================================================
 
-          if [[ "${GITHUB_EVENT_NAME}" == "push" &&
-                "${GITHUB_REF_NAME}" == "test" ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+
+            if [[ "${GITHUB_REF_NAME}" != "test" ]]; then
+              echo "::error::Unexpected branch: ${GITHUB_REF_NAME}"
+              exit 1
+            fi
 
             VERSION=$(
               git tag --list 'v*.*.*' |
               grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
-              sed 's/^v//' |
               sort -V |
               tail -n 1 || true
             )
@@ -136,9 +151,7 @@ jobs:
             CHANNEL="release"
 
           else
-            echo "::error::Unexpected event."
-            echo "Event: ${GITHUB_EVENT_NAME}"
-            echo "Ref:   ${GITHUB_REF}"
+            echo "::error::Unexpected event: ${GITHUB_EVENT_NAME}"
             exit 1
           fi
 
@@ -153,7 +166,7 @@ jobs:
           echo "CHANNEL=${CHANNEL}" >> "$GITHUB_OUTPUT"
 
       # ==============================================================
-      # Determine image tags
+      # Determine Docker tags
       # ==============================================================
 
       - name: Determine image tags
@@ -200,21 +213,21 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       # ==============================================================
-      # Set up QEMU
+      # QEMU
       # ==============================================================
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
       # ==============================================================
-      # Set up Docker Buildx
+      # Buildx
       # ==============================================================
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
       # ==============================================================
-      # Login to Docker Hub
+      # Docker Hub login
       # ==============================================================
 
       - name: Login to Docker Hub
@@ -224,7 +237,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # ==============================================================
-      # Build and Push
+      # Build and push
       # ==============================================================
 
       - name: Build and push
