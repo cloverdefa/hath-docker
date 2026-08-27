@@ -1,7 +1,6 @@
 name: Docker
 
 on:
-
   push:
     branches:
       - test
@@ -45,21 +44,32 @@ jobs:
         run: |
           set -euo pipefail
 
-          VERSION=$(
+          # 1. 取得最新正式 Tag (例如 v0.4.2)
+          LATEST_VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
             sort -V |
             tail -n 1 || true
           )
 
-          if [[ -z "$VERSION" ]]; then
+          if [[ -z "$LATEST_VERSION" ]]; then
             echo "::error::No release version found."
             exit 1
           fi
 
-          echo "Latest release version: ${VERSION}"
+          # 2. 移除 'v' 前綴並拆解版號
+          VERSION_WITHOUT_V="${LATEST_VERSION#v}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
 
-          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+          # 3. Patch 進位 +1
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
+
+          echo "Latest release version: ${LATEST_VERSION}"
+          echo "Next test version: ${NEXT_VERSION}"
+
+          # 4. 輸出 v0.4.3
+          echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
