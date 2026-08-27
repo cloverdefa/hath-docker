@@ -19,7 +19,7 @@ docker run \
   -v /本地tmp路徑:/hath/tmp \
   -e HATH_CLIENT_ID=輸入你的HATH_ID \
   -e HATH_CLIENT_KEY=輸入你的HATH_KEY \
-  -e UMASK=022 \
+  -e UMASK=077 \
   cloverdefa/hath:latest
 ```
 
@@ -48,7 +48,7 @@ services:
       # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
       HATH_CLIENT_ID: "${HATH_CLIENT_ID}"
       HATH_CLIENT_KEY: "${HATH_CLIENT_KEY}"
-      UMASK: "022"
+      UMASK: "077"
       TZ: "Asia/Taipei" # 設定主機所在時區
     env_file: "./.env"
 networks:
