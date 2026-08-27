@@ -14,7 +14,6 @@ jobs:
   release:
     if: >
       github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'main' &&
       (
         github.event.pull_request.head.ref == 'test' ||
         github.event.pull_request.head.ref == 'dev'
@@ -24,7 +23,7 @@ jobs:
 
     steps:
       # ==============================================================
-      # Checkout main
+      # Checkout merged main
       # ==============================================================
 
       - name: Checkout main
@@ -45,32 +44,27 @@ jobs:
 
           git fetch --tags --force
 
-          # ----------------------------------------------------------
+          # ==========================================================
           # Find latest semantic version tag
-          #
-          # Example:
-          #   v0.1.0
-          #   v0.1.1
-          #   v1.0.0
-          #   v1.2.3
-          # ----------------------------------------------------------
+          # ==========================================================
 
           latest_tag=$(
-            git tag --list 'v*' |
+            git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
             sort -V |
             tail -n 1 || true
           )
 
-          # ----------------------------------------------------------
-          # No existing release
-          # ----------------------------------------------------------
+          echo "Latest tag: ${latest_tag:-none}"
 
-          if [ -z "$latest_tag" ]; then
+          # ==========================================================
+          # Initial release
+          # ==========================================================
+
+          if [[ -z "$latest_tag" ]]; then
             major=0
             minor=1
             patch=0
-
             release_type="initial"
 
           else
@@ -78,51 +72,33 @@ jobs:
 
             IFS='.' read -r major minor patch <<< "$version"
 
-            # --------------------------------------------------------
-            # Determine release type from commits since latest release
-            #
-            # Priority:
-            #
-            #   MAJOR > MINOR > PATCH
-            #
-            # MAJOR:
-            #   feat!: ...
-            #   fix!: ...
-            #   refactor!: ...
-            #   BREAKING CHANGE: ...
-            #
-            # MINOR:
-            #   feat: ...
-            #
-            # PATCH:
-            #   fix: ...
-            #
-            # No release:
-            #   docs: ...
-            #   chore: ...
-            #   refactor: ...
-            #   test: ...
-            #   style: ...
-            #   ci: ...
-            # --------------------------------------------------------
-
             release_type="none"
 
-            echo "Latest tag: $latest_tag"
-            echo "Analyzing commits since $latest_tag..."
+            echo "Analyzing commits since ${latest_tag}..."
+
+            # ========================================================
+            # Analyze commit subjects and bodies
+            # ========================================================
 
             while IFS= read -r commit; do
-              echo "Commit:"
-              echo "$commit"
+
+              [[ -z "$commit" ]] && continue
+
+              echo "Commit: $commit"
 
               # ------------------------------------------------------
               # MAJOR
               # ------------------------------------------------------
 
               if printf '%s\n' "$commit" |
-                grep -Eq '^[a-zA-Z0-9_-]+(\([^)]*\))?!:' ||
-                printf '%s\n' "$commit" |
-                grep -Eq 'BREAKING CHANGE:'; then
+                grep -Eq '^[a-zA-Z0-9_-]+(\([^)]*\))?!:'; then
+
+                release_type="major"
+                continue
+              fi
+
+              if printf '%s\n' "$commit" |
+                grep -Eq '^BREAKING CHANGE:'; then
 
                 release_type="major"
                 continue
@@ -135,7 +111,7 @@ jobs:
               if printf '%s\n' "$commit" |
                 grep -Eq '^feat(\([^)]*\))?:'; then
 
-                if [ "$release_type" != "major" ]; then
+                if [[ "$release_type" != "major" ]]; then
                   release_type="minor"
                 fi
 
@@ -149,25 +125,24 @@ jobs:
               if printf '%s\n' "$commit" |
                 grep -Eq '^fix(\([^)]*\))?:'; then
 
-                if [ "$release_type" = "none" ]; then
+                if [[ "$release_type" == "none" ]]; then
                   release_type="patch"
                 fi
 
-                continue
               fi
 
             done < <(
-              git log "$latest_tag..HEAD" \
-                --pretty=format:'%s%n%b%n---'
+              git log "${latest_tag}..HEAD" \
+                --pretty=format:'%s'
             )
 
-            echo "Detected release type: $release_type"
+            echo "Detected release type: ${release_type}"
 
-            # --------------------------------------------------------
-            # No release required
-            # --------------------------------------------------------
+            # ========================================================
+            # No release
+            # ========================================================
 
-            if [ "$release_type" = "none" ]; then
+            if [[ "$release_type" == "none" ]]; then
               echo "No release required."
 
               echo "should_release=false" >> "$GITHUB_OUTPUT"
@@ -175,19 +150,11 @@ jobs:
               exit 0
             fi
 
-            # --------------------------------------------------------
+            # ========================================================
             # Calculate next version
-            # --------------------------------------------------------
+            # ========================================================
 
             case "$release_type" in
-              patch)
-                patch=$((patch + 1))
-                ;;
-
-              minor)
-                minor=$((minor + 1))
-                patch=0
-                ;;
 
               major)
                 major=$((major + 1))
@@ -195,34 +162,51 @@ jobs:
                 patch=0
                 ;;
 
+              minor)
+                minor=$((minor + 1))
+                patch=0
+                ;;
+
+              patch)
+                patch=$((patch + 1))
+                ;;
+
               *)
-                echo "::error::Invalid release type: $release_type"
+                echo "::error::Invalid release type: ${release_type}"
                 exit 1
                 ;;
+
             esac
           fi
+
+          # ==========================================================
+          # Build version
+          # ==========================================================
 
           version="${major}.${minor}.${patch}"
           tag="v${version}"
 
-          # ----------------------------------------------------------
+          echo "Release type: ${release_type}"
+          echo "Next version: ${version}"
+          echo "Next tag: ${tag}"
+
+          # ==========================================================
           # Prevent duplicate tag
-          # ----------------------------------------------------------
+          # ==========================================================
 
           if git rev-parse "$tag" >/dev/null 2>&1; then
-            echo "::error::Tag $tag already exists."
+            echo "::error::Tag ${tag} already exists."
             exit 1
           fi
 
-          echo "Latest tag: ${latest_tag:-none}"
-          echo "Release type: $release_type"
-          echo "Next version: $version"
-          echo "Next tag: $tag"
+          # ==========================================================
+          # Outputs
+          # ==========================================================
 
           echo "should_release=true" >> "$GITHUB_OUTPUT"
-          echo "release_type=$release_type" >> "$GITHUB_OUTPUT"
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "release_type=${release_type}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
 
       # ==============================================================
       # Create GitHub Release
