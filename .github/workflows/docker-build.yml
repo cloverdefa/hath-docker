@@ -1,15 +1,17 @@
 name: Docker
 
 on:
-  push:
-    branches:
-      - test
-
+  # dev -> test: Release workflow 在 test 分支打好 Tag 後觸發 Docker Test Build
   workflow_run:
     workflows:
       - Release
     types:
       - completed
+
+  # dev -> main: 當 main 分支有更新（包含 test 驗證過的 Tag 與 Commit）時觸發
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -17,13 +19,16 @@ permissions:
 jobs:
 
   # ================================================================
-  # TEST (PR/Push 到 test 時執行：預測下一個 Patch 版號，推送 v0.4.3-test)
+  # TEST (test 分支打上 Tag 後執行)
   # ================================================================
 
   test:
     name: Docker Test Build
 
-    if: github.event_name == 'push'
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.name == 'Release' &&
+      github.event.workflow_run.conclusion == 'success'
 
     runs-on: ubuntu-latest
 
@@ -32,7 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: test
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
       - name: Fetch tags
@@ -48,28 +53,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          LATEST_VERSION=$(
+          # 直接讀取 Release workflow 剛建立的最新 Tag (如 v0.4.3 或 v0.5.0)
+          VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
             sort -V |
             tail -n 1 || true
           )
 
-          if [[ -z "$LATEST_VERSION" ]]; then
+          if [[ -z "$VERSION" ]]; then
             echo "::error::No release version found."
             exit 1
           fi
 
-          VERSION_WITHOUT_V="${LATEST_VERSION#v}"
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
+          echo "Target version: ${VERSION}"
 
-          NEXT_PATCH=$((PATCH + 1))
-          NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
-
-          echo "Latest release version: ${LATEST_VERSION}"
-          echo "Next test version: ${NEXT_VERSION}"
-
-          echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -98,16 +97,13 @@ jobs:
 
 
   # ================================================================
-  # RELEASE (Release workflow 完成後觸發：直接抓取剛剛建立的正式 Tag v0.4.3)
+  # RELEASE (test 測試完畢合到 main 後執行)
   # ================================================================
 
   release:
     name: Docker Release Build
 
-    if: >
-      github.event_name == 'workflow_run' &&
-      github.event.workflow_run.name == 'Release' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     runs-on: ubuntu-latest
 
@@ -116,7 +112,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: main
           fetch-depth: 0
 
       - name: Fetch tags
@@ -132,7 +128,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 直接讀取最新剛建立的 Tag (此時已經是 v0.4.3)
+          # 讀取從 test 合併過來的既有正式 Tag
           VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
