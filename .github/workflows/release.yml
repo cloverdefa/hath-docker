@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - test
+      - main
 
 permissions:
   contents: write
@@ -25,7 +25,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           git fetch --tags --force
 
       - name: Determine next version
@@ -50,19 +49,13 @@ jobs:
             COMMITS=$(git log "${LATEST_VERSION}..HEAD" --oneline || true)
 
             if echo "$COMMITS" | grep -iE '^(.*: )?(feat|feat\(.*\))|BREAKING CHANGE' > /dev/null; then
-              echo "Detected feature or breaking change. Bumping MINOR."
               NEXT_MINOR=$((MINOR + 1))
-              NEXT_PATCH=0
-              NEXT_VERSION="v${MAJOR}.${NEXT_MINOR}.${NEXT_PATCH}"
+              NEXT_VERSION="v${MAJOR}.${NEXT_MINOR}.0"
             else
-              echo "Detected fix or routine changes. Bumping PATCH."
               NEXT_PATCH=$((PATCH + 1))
               NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
             fi
           fi
-
-          echo "Latest release tag: ${LATEST_VERSION}"
-          echo "New release tag to create: ${NEXT_VERSION}"
 
           echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 

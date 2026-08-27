@@ -1,17 +1,14 @@
 name: Docker
 
 on:
-  # dev -> test: Release workflow 在 test 分支打好 Tag 後觸發 Docker Test Build
+  push:
+    branches:
+      - test
   workflow_run:
     workflows:
       - Release
     types:
       - completed
-
-  # dev -> main: 當 main 分支有更新（包含 test 驗證過的 Tag 與 Commit）時觸發
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
@@ -19,17 +16,12 @@ permissions:
 jobs:
 
   # ================================================================
-  # TEST (test 分支打上 Tag 後執行)
+  # 1. TEST (dev -> test): 預測版號，構建 v0.4.4-test 與 test
   # ================================================================
 
   test:
     name: Docker Test Build
-
-    if: >
-      github.event_name == 'workflow_run' &&
-      github.event.workflow_run.name == 'Release' &&
-      github.event.workflow_run.conclusion == 'success'
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/test'
     runs-on: ubuntu-latest
 
     steps:
@@ -37,38 +29,46 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: test
           fetch-depth: 0
 
       - name: Fetch tags
         shell: bash
         run: |
           set -euo pipefail
-
           git fetch --tags --force
 
-      - name: Determine version
+      - name: Predict test version
         id: version
         shell: bash
         run: |
           set -euo pipefail
 
-          # 直接讀取 Release workflow 剛建立的最新 Tag (如 v0.4.3 或 v0.5.0)
-          VERSION=$(
+          LATEST_VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
             sort -V |
             tail -n 1 || true
           )
 
-          if [[ -z "$VERSION" ]]; then
-            echo "::error::No release version found."
-            exit 1
+          if [[ -z "$LATEST_VERSION" ]]; then
+            NEXT_VERSION="v0.1.0"
+          else
+            VERSION_WITHOUT_V="${LATEST_VERSION#v}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
+
+            COMMITS=$(git log "${LATEST_VERSION}..HEAD" --oneline || true)
+
+            if echo "$COMMITS" | grep -iE '^(.*: )?(feat|feat\(.*\))|BREAKING CHANGE' > /dev/null; then
+              NEXT_MINOR=$((MINOR + 1))
+              NEXT_VERSION="v${MAJOR}.${NEXT_MINOR}.0"
+            else
+              NEXT_PATCH=$((PATCH + 1))
+              NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
+            fi
           fi
 
-          echo "Target version: ${VERSION}"
-
-          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -97,14 +97,15 @@ jobs:
 
 
   # ================================================================
-  # RELEASE (test 測試完畢合到 main 後執行)
+  # 2. RELEASE (dev -> main): 抓取已發布的 Tag，構建 v0.4.4 與 latest
   # ================================================================
 
   release:
     name: Docker Release Build
-
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.name == 'Release' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
@@ -112,23 +113,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: main
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
       - name: Fetch tags
         shell: bash
         run: |
           set -euo pipefail
-
           git fetch --tags --force
 
-      - name: Determine released version
+      - name: Get released tag
         id: version
         shell: bash
         run: |
           set -euo pipefail
 
-          # 讀取從 test 合併過來的既有正式 Tag
           VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
@@ -140,8 +139,6 @@ jobs:
             echo "::error::No release version found."
             exit 1
           fi
-
-          echo "Released version: ${VERSION}"
 
           echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
 
