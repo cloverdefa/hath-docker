@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - test
-
   workflow_run:
     workflows:
       - Release
@@ -17,14 +16,12 @@ permissions:
 jobs:
 
   # ================================================================
-  # TEST (PR/Push 到 test 時執行：預測下一個 Patch 版號，推送 v0.4.3-test)
+  # 1. TEST (dev -> test): 預測版號，構建 v0.4.4-test 與 test
   # ================================================================
 
   test:
     name: Docker Test Build
-
-    if: github.event_name == 'push'
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/test'
     runs-on: ubuntu-latest
 
     steps:
@@ -39,10 +36,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           git fetch --tags --force
 
-      - name: Determine version
+      - name: Predict test version
         id: version
         shell: bash
         run: |
@@ -56,18 +52,21 @@ jobs:
           )
 
           if [[ -z "$LATEST_VERSION" ]]; then
-            echo "::error::No release version found."
-            exit 1
+            NEXT_VERSION="v0.1.0"
+          else
+            VERSION_WITHOUT_V="${LATEST_VERSION#v}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
+
+            COMMITS=$(git log "${LATEST_VERSION}..HEAD" --oneline || true)
+
+            if echo "$COMMITS" | grep -iE '^(.*: )?(feat|feat\(.*\))|BREAKING CHANGE' > /dev/null; then
+              NEXT_MINOR=$((MINOR + 1))
+              NEXT_VERSION="v${MAJOR}.${NEXT_MINOR}.0"
+            else
+              NEXT_PATCH=$((PATCH + 1))
+              NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
+            fi
           fi
-
-          VERSION_WITHOUT_V="${LATEST_VERSION#v}"
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
-
-          NEXT_PATCH=$((PATCH + 1))
-          NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
-
-          echo "Latest release version: ${LATEST_VERSION}"
-          echo "Next test version: ${NEXT_VERSION}"
 
           echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
@@ -98,17 +97,15 @@ jobs:
 
 
   # ================================================================
-  # RELEASE (Release workflow 完成後觸發：直接抓取剛剛建立的正式 Tag v0.4.3)
+  # 2. RELEASE (dev -> main): 抓取已發布的 Tag，構建 v0.4.4 與 latest
   # ================================================================
 
   release:
     name: Docker Release Build
-
     if: >
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.name == 'Release' &&
       github.event.workflow_run.conclusion == 'success'
-
     runs-on: ubuntu-latest
 
     steps:
@@ -123,16 +120,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           git fetch --tags --force
 
-      - name: Determine released version
+      - name: Get released tag
         id: version
         shell: bash
         run: |
           set -euo pipefail
 
-          # 直接讀取最新剛建立的 Tag (此時已經是 v0.4.3)
           VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
@@ -144,8 +139,6 @@ jobs:
             echo "::error::No release version found."
             exit 1
           fi
-
-          echo "Released version: ${VERSION}"
 
           echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
 
