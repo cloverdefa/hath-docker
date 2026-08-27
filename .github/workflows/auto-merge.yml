@@ -1,4 +1,5 @@
 name: Auto Merge
+
 on:
   pull_request:
     types:
@@ -13,17 +14,28 @@ permissions:
 
 jobs:
   automerge:
+    name: Auto Merge
+
     if: >
       github.event.pull_request.user.login == 'cloverdefa' &&
-      github.event.pull_request.base.ref == 'main' &&
-      contains(fromJSON('["dev", "test"]'), github.event.pull_request.head.ref) &&
-      github.event.pull_request.draft == false
+      github.event.pull_request.draft == false &&
+      (
+        (
+          github.event.pull_request.base.ref == 'main' &&
+          contains(fromJSON('["dev", "test"]'), github.event.pull_request.head.ref)
+        ) ||
+        (
+          github.event.pull_request.base.ref == 'test' &&
+          github.event.pull_request.head.ref == 'dev'
+        )
+      )
 
     runs-on: ubuntu-latest
+
     steps:
       - name: Enable auto-merge
         env:
-          GH_TOKEN: ${{ secrets.PR_TOKEN}}
+          GH_TOKEN: ${{ secrets.PR_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           gh pr merge "$PR_URL" \
