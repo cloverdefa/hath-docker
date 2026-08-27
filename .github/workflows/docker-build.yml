@@ -5,14 +5,14 @@ on:
   # Test Docker Build
   #
   # dev → test
-  #       ↓
-  #     push
-  #       ↓
-  #   Docker Build
+  #     ↓
+  # push test
+  #     ↓
+  # Docker
   #
   # Images:
   #   cloverdefa/hath:test
-  #   cloverdefa/hath:v0.4.2-test
+  #   cloverdefa/hath:v0.4.x-test
   # ==============================================================
 
   push:
@@ -23,17 +23,17 @@ on:
   # Release Docker Build
   #
   # dev → main
-  #       ↓
-  #     Release
-  #       ↓
-  #     v0.4.2
-  #       ↓
+  #     ↓
+  # Release
+  #     ↓
+  # v0.4.x
+  #     ↓
   # workflow_run
-  #       ↓
-  #   Docker Build
+  #     ↓
+  # Docker
   #
   # Images:
-  #   cloverdefa/hath:v0.4.2
+  #   cloverdefa/hath:v0.4.x
   #   cloverdefa/hath:latest
   # ==============================================================
 
@@ -47,46 +47,33 @@ permissions:
   contents: read
 
 jobs:
-  docker:
-    name: Docker Build
 
-    # ==============================================================
-    # Only run when:
-    #
-    # 1. test branch is pushed
-    # 2. Release workflow completed successfully
-    # ==============================================================
+  # ================================================================
+  # TEST
+  # ================================================================
 
-    if: >
-      github.event_name == 'push' ||
-      (
-        github.event_name == 'workflow_run' &&
-        github.event.workflow_run.name == 'Release' &&
-        github.event.workflow_run.conclusion == 'success'
-      )
+  test:
+    name: Docker Test Build
+
+    if: github.event_name == 'push'
 
     runs-on: ubuntu-latest
 
     steps:
-      # ==============================================================
-      # Checkout
-      #
-      # push:
-      #   checkout test commit
-      #
-      # workflow_run:
-      #   checkout Release workflow HEAD commit
-      # ==============================================================
+
+      # --------------------------------------------------------------
+      # Checkout test
+      # --------------------------------------------------------------
 
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: test
           fetch-depth: 0
 
-      # ==============================================================
+      # --------------------------------------------------------------
       # Fetch tags
-      # ==============================================================
+      # --------------------------------------------------------------
 
       - name: Fetch tags
         shell: bash
@@ -95,9 +82,9 @@ jobs:
 
           git fetch --tags --force
 
-      # ==============================================================
+      # --------------------------------------------------------------
       # Determine version
-      # ==============================================================
+      # --------------------------------------------------------------
 
       - name: Determine version
         id: version
@@ -105,336 +92,51 @@ jobs:
         run: |
           set -euo pipefail
 
-          # ==========================================================
-          # Find latest semantic release
-          #
-          # Result:
-          #
-          #   0.4.1
-          #
-          # NOT:
-          #
-          #   v0.4.1
-          #
-          # VERSION is always stored without "v".
-          # ==========================================================
-
-          latest_version=$(
+          VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
             sort -V |
-            tail -n 1 |
-            sed 's/^v//' || true
+            tail -n 1 || true
           )
 
-          # ==========================================================
-          # TEST BUILD
-          #
-          # Trigger:
-          #
-          #   push → test
-          #
-          # The test image represents the NEXT release version.
-          #
-          # Example:
-          #
-          #   latest = 0.4.1
-          #   test   = 0.4.2-test
-          # ==========================================================
-
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-
-            if [[ "${GITHUB_REF_NAME}" != "test" ]]; then
-              echo "::error::Unexpected branch: ${GITHUB_REF_NAME}"
-              exit 1
-            fi
-
-            if [[ -z "$latest_version" ]]; then
-
-              # First release
-              major=0
-              minor=1
-              patch=0
-
-            else
-
-              IFS='.' read -r major minor patch <<< "$latest_version"
-
-              # ------------------------------------------------------
-              # Determine next version from commits since latest tag
-              #
-              # MAJOR:
-              #   feat!: ...
-              #   fix!: ...
-              #   BREAKING CHANGE:
-              #
-              # MINOR:
-              #   feat: ...
-              #
-              # PATCH:
-              #   fix: ...
-              #
-              # Otherwise:
-              #   patch
-              #
-              # This makes the test image represent the version
-              # that Release.yml is expected to create.
-              # ------------------------------------------------------
-
-              latest_tag="v${latest_version}"
-
-              release_type="none"
-
-              echo "Latest release: ${latest_tag}"
-              echo "Analyzing commits since ${latest_tag}..."
-
-              while IFS= read -r commit; do
-
-                [[ -z "$commit" ]] && continue
-                [[ "$commit" == "---" ]] && continue
-
-                echo "Commit: $commit"
-
-                # ----------------------------------------------------
-                # MAJOR
-                # ----------------------------------------------------
-
-                if printf '%s\n' "$commit" |
-                  grep -Eq '^[a-zA-Z0-9_-]+(\([^)]*\))?!:'; then
-
-                  release_type="major"
-                  continue
-                fi
-
-                if printf '%s\n' "$commit" |
-                  grep -Eq '^BREAKING CHANGE:'; then
-
-                  release_type="major"
-                  continue
-                fi
-
-                # ----------------------------------------------------
-                # MINOR
-                # ----------------------------------------------------
-
-                if printf '%s\n' "$commit" |
-                  grep -Eq '^feat(\([^)]*\))?:'; then
-
-                  if [[ "$release_type" != "major" ]]; then
-                    release_type="minor"
-                  fi
-
-                  continue
-                fi
-
-                # ----------------------------------------------------
-                # PATCH
-                # ----------------------------------------------------
-
-                if printf '%s\n' "$commit" |
-                  grep -Eq '^fix(\([^)]*\))?:'; then
-
-                  if [[ "$release_type" == "none" ]]; then
-                    release_type="patch"
-                  fi
-
-                  continue
-                fi
-
-              done < <(
-                git log "${latest_tag}..HEAD" \
-                  --pretty=format:'%s%n%b%n---'
-              )
-
-              echo "Detected release type: ${release_type}"
-
-              # ------------------------------------------------------
-              # If no Conventional Commit requires a release,
-              # still use patch as the test version.
-              #
-              # This allows test Docker builds to always have a
-              # deterministic version.
-              # ------------------------------------------------------
-
-              if [[ "$release_type" == "none" ]]; then
-                release_type="patch"
-              fi
-
-              # ------------------------------------------------------
-              # Calculate next version
-              # ------------------------------------------------------
-
-              case "$release_type" in
-
-                major)
-                  major=$((major + 1))
-                  minor=0
-                  patch=0
-                  ;;
-
-                minor)
-                  minor=$((minor + 1))
-                  patch=0
-                  ;;
-
-                patch)
-                  patch=$((patch + 1))
-                  ;;
-
-                *)
-                  echo "::error::Invalid release type: ${release_type}"
-                  exit 1
-                  ;;
-
-              esac
-
-            fi
-
-            VERSION="${major}.${minor}.${patch}"
-            CHANNEL="test"
-
-          # ==========================================================
-          # RELEASE BUILD
-          #
-          # Trigger:
-          #
-          #   workflow_run → Release success
-          #
-          # Release.yml has already created:
-          #
-          #   v0.4.2
-          #
-          # Therefore we simply use the newest release tag.
-          # ==========================================================
-
-          elif [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
-
-            if [[ -z "$latest_version" ]]; then
-              echo "::error::No release version found."
-              exit 1
-            fi
-
-            VERSION="$latest_version"
-            CHANNEL="release"
-
-          else
-
-            echo "::error::Unexpected event: ${GITHUB_EVENT_NAME}"
+          if [[ -z "$VERSION" ]]; then
+            echo "::error::No release version found."
             exit 1
-
           fi
 
-          # ==========================================================
-          # Output
-          # ==============================================================
-
-          echo "========================================"
-          echo "Event          : ${GITHUB_EVENT_NAME}"
-          echo "Ref            : ${GITHUB_REF}"
-          echo "Latest version : ${latest_version:-none}"
-          echo "Build version   : ${VERSION}"
-          echo "Channel         : ${CHANNEL}"
-          echo "========================================"
+          echo "Latest release version: ${VERSION}"
 
           echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "CHANNEL=${CHANNEL}" >> "$GITHUB_OUTPUT"
 
-      # ==============================================================
-      # Determine Docker image tags
-      # ==============================================================
-
-      - name: Determine image tags
-        id: tags
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          VERSION="${{ steps.version.outputs.VERSION }}"
-          CHANNEL="${{ steps.version.outputs.CHANNEL }}"
-
-          # ==========================================================
-          # TEST
-          #
-          # Example:
-          #
-          #   VERSION = 0.4.2
-          #
-          # Tags:
-          #
-          #   test
-          #   v0.4.2-test
-          # ==========================================================
-
-          if [[ "$CHANNEL" == "test" ]]; then
-
-            TAGS="cloverdefa/hath:test"
-            TAGS="${TAGS}"$'\n'"cloverdefa/hath:v${VERSION}-test"
-
-          # ==========================================================
-          # RELEASE
-          #
-          # Example:
-          #
-          #   VERSION = 0.4.2
-          #
-          # Tags:
-          #
-          #   v0.4.2
-          #   latest
-          # ==========================================================
-
-          elif [[ "$CHANNEL" == "release" ]]; then
-
-            TAGS="cloverdefa/hath:v${VERSION}"
-            TAGS="${TAGS}"$'\n'"cloverdefa/hath:latest"
-
-          else
-
-            echo "::error::Unknown channel: ${CHANNEL}"
-            exit 1
-
-          fi
-
-          echo "========================================"
-          echo "Docker image tags:"
-          echo "$TAGS"
-          echo "========================================"
-
-          {
-            echo "TAGS<<EOF"
-            echo "$TAGS"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      # ==============================================================
+      # --------------------------------------------------------------
       # Set up QEMU
-      # ==============================================================
+      # --------------------------------------------------------------
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
-      # ==============================================================
-      # Set up Docker Buildx
-      # ==============================================================
+      # --------------------------------------------------------------
+      # Set up Buildx
+      # --------------------------------------------------------------
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      # ==============================================================
-      # Login to Docker Hub
-      # ==============================================================
+      # --------------------------------------------------------------
+      # Login Docker Hub
+      # --------------------------------------------------------------
 
-      - name: Login to Docker Hub
+      - name: Login Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # ==============================================================
-      # Build and Push
-      # ==============================================================
+      # --------------------------------------------------------------
+      # Build and Push Test Image
+      # --------------------------------------------------------------
 
-      - name: Build and push
+      - name: Build and push test image
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -447,7 +149,115 @@ jobs:
           build-args: |
             IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
 
-          tags: ${{ steps.tags.outputs.TAGS }}
+          tags: |
+            cloverdefa/hath:test
+            cloverdefa/hath:v${{ steps.version.outputs.VERSION }}-test
 
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+
+  # ================================================================
+  # RELEASE
+  # ================================================================
+
+  release:
+    name: Docker Release Build
+
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.name == 'Release' &&
+      github.event.workflow_run.conclusion == 'success'
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # --------------------------------------------------------------
+      # Checkout exact Release commit
+      # --------------------------------------------------------------
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      # --------------------------------------------------------------
+      # Fetch tags
+      # --------------------------------------------------------------
+
+      - name: Fetch tags
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch --tags --force
+
+      # --------------------------------------------------------------
+      # Determine released version
+      # --------------------------------------------------------------
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION=$(
+            git tag --list 'v*.*.*' |
+            grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
+            sort -V |
+            tail -n 1 || true
+          )
+
+          if [[ -z "$VERSION" ]]; then
+            echo "::error::No release version found."
+            exit 1
+          fi
+
+          echo "Released version: ${VERSION}"
+
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      # --------------------------------------------------------------
+      # Set up QEMU
+      # --------------------------------------------------------------
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      # --------------------------------------------------------------
+      # Set up Buildx
+      # --------------------------------------------------------------
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # --------------------------------------------------------------
+      # Login Docker Hub
+      # --------------------------------------------------------------
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # --------------------------------------------------------------
+      # Build and Push Release Image
+      # --------------------------------------------------------------
+
+      - name: Build and push release image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./docker/Dockerfile
+
+          platforms: linux/amd64,linux/arm64
+
+          push: true
+
+          build-args: |
+            IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
+
+          tags: |
+            cloverdefa/hath:v${{ steps.version.outputs.VERSION }}
+            cloverdefa/hath:latest
