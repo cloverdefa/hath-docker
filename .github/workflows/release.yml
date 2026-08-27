@@ -14,16 +14,14 @@ jobs:
   release:
     if: >
       github.event.pull_request.merged == true &&
-      (
-        github.event.pull_request.head.ref == 'test' ||
-        github.event.pull_request.head.ref == 'dev'
-      )
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.ref == 'dev'
 
     runs-on: ubuntu-latest
 
     steps:
       # ==============================================================
-      # Checkout merged main
+      # Checkout main
       # ==============================================================
 
       - name: Checkout main
@@ -44,10 +42,6 @@ jobs:
 
           git fetch --tags --force
 
-          # ==========================================================
-          # Find latest semantic version tag
-          # ==========================================================
-
           latest_tag=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
@@ -62,12 +56,15 @@ jobs:
           # ==========================================================
 
           if [[ -z "$latest_tag" ]]; then
+
             major=0
             minor=1
             patch=0
+
             release_type="initial"
 
           else
+
             version="${latest_tag#v}"
 
             IFS='.' read -r major minor patch <<< "$version"
@@ -75,10 +72,6 @@ jobs:
             release_type="none"
 
             echo "Analyzing commits since ${latest_tag}..."
-
-            # ========================================================
-            # Analyze commit subjects and bodies
-            # ========================================================
 
             while IFS= read -r commit; do
 
@@ -139,10 +132,11 @@ jobs:
             echo "Detected release type: ${release_type}"
 
             # ========================================================
-            # No release
+            # No release required
             # ========================================================
 
             if [[ "$release_type" == "none" ]]; then
+
               echo "No release required."
 
               echo "should_release=false" >> "$GITHUB_OUTPUT"
@@ -179,16 +173,12 @@ jobs:
             esac
           fi
 
-          # ==========================================================
-          # Build version
-          # ==========================================================
-
           version="${major}.${minor}.${patch}"
           tag="v${version}"
 
-          echo "Release type: ${release_type}"
-          echo "Next version: ${version}"
-          echo "Next tag: ${tag}"
+          echo "Release type : ${release_type}"
+          echo "Next version : ${version}"
+          echo "Next tag     : ${tag}"
 
           # ==========================================================
           # Prevent duplicate tag
@@ -198,10 +188,6 @@ jobs:
             echo "::error::Tag ${tag} already exists."
             exit 1
           fi
-
-          # ==========================================================
-          # Outputs
-          # ==========================================================
 
           echo "should_release=true" >> "$GITHUB_OUTPUT"
           echo "release_type=${release_type}" >> "$GITHUB_OUTPUT"
