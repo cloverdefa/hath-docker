@@ -1,9 +1,7 @@
 name: Release
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - main
 
@@ -11,297 +9,74 @@ permissions:
   contents: write
 
 jobs:
+
   release:
-    # ==============================================================
-    # Only release when:
-    #
-    #   PR closed
-    #   base  = main
-    #   head  = dev
-    #   merged = true
-    # ==============================================================
-
-    if: >
-      github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'main' &&
-      github.event.pull_request.head.ref == 'dev'
-
+    name: Create GitHub Release
     runs-on: ubuntu-latest
 
     steps:
-      # ==============================================================
-      # Checkout merged main
-      # ==============================================================
 
-      - name: Checkout main
+      # --------------------------------------------------------------
+      # Checkout main
+      # --------------------------------------------------------------
+
+      - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: main
           fetch-depth: 0
 
-      # ==============================================================
-      # Get next version
-      # ==============================================================
+      # --------------------------------------------------------------
+      # Fetch tags
+      # --------------------------------------------------------------
 
-      - name: Get next version
+      - name: Fetch tags
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch --tags --force
+
+      # --------------------------------------------------------------
+      # Determine and Increment Version
+      # --------------------------------------------------------------
+
+      - name: Determine next version
         id: version
         shell: bash
         run: |
           set -euo pipefail
 
-          # ----------------------------------------------------------
-          # Fetch all tags
-          # ----------------------------------------------------------
-
-          git fetch --tags --force
-
-          # ----------------------------------------------------------
-          # Find latest semantic version tag
-          #
-          # Example:
-          #
-          #   v0.1.0
-          #   v0.2.0
-          #   v0.2.1
-          #   v1.0.0
-          #
-          # Only valid semantic versions are considered.
-          # ----------------------------------------------------------
-
-          latest_tag=$(
+          # 1. 取得目前最新正式 Tag (例如 v0.4.2)
+          LATEST_VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
             sort -V |
             tail -n 1 || true
           )
 
-          echo "Latest release: ${latest_tag:-none}"
-
-          # ==========================================================
-          # Initial release
-          # ==========================================================
-
-          if [[ -z "$latest_tag" ]]; then
-
-            major=0
-            minor=1
-            patch=0
-
-            release_type="initial"
-
+          # 如果完全沒有 Tag，預設從 v0.1.0 開始
+          if [[ -z "$LATEST_VERSION" ]]; then
+            NEXT_VERSION="v0.1.0"
           else
-
-            # --------------------------------------------------------
-            # Parse current version
-            # --------------------------------------------------------
-
-            version="${latest_tag#v}"
-
-            IFS='.' read -r major minor patch <<< "$version"
-
-            release_type="none"
-
-            echo "Analyzing commits since ${latest_tag}..."
-            echo
-
-            # ========================================================
-            # Analyze commits
-            #
-            # MAJOR:
-            #   feat!: ...
-            #   fix!: ...
-            #   refactor!: ...
-            #   BREAKING CHANGE: ...
-            #
-            # MINOR:
-            #   feat: ...
-            #
-            # PATCH:
-            #   fix: ...
-            #
-            # No release:
-            #   docs:
-            #   chore:
-            #   refactor:
-            #   test:
-            #   style:
-            #   ci:
-            # ========================================================
-
-            while IFS= read -r commit; do
-
-              [[ -z "$commit" ]] && continue
-              [[ "$commit" == "---" ]] && continue
-
-              echo "Commit:"
-              echo "$commit"
-              echo
-
-              # ------------------------------------------------------
-              # MAJOR
-              #
-              # Conventional Commit with !:
-              #
-              # feat!: ...
-              # fix!: ...
-              # refactor!: ...
-              # ------------------------------------------------------
-
-              if printf '%s\n' "$commit" |
-                grep -Eq '^[a-zA-Z0-9_-]+(\([^)]*\))?!:'; then
-
-                release_type="major"
-                continue
-              fi
-
-              # ------------------------------------------------------
-              # MAJOR
-              #
-              # BREAKING CHANGE:
-              # ------------------------------------------------------
-
-              if printf '%s\n' "$commit" |
-                grep -Eq '^BREAKING CHANGE:'; then
-
-                release_type="major"
-                continue
-              fi
-
-              # ------------------------------------------------------
-              # MINOR
-              #
-              # feat:
-              # feat(scope):
-              # ------------------------------------------------------
-
-              if printf '%s\n' "$commit" |
-                grep -Eq '^feat(\([^)]*\))?:'; then
-
-                if [[ "$release_type" != "major" ]]; then
-                  release_type="minor"
-                fi
-
-                continue
-              fi
-
-              # ------------------------------------------------------
-              # PATCH
-              #
-              # fix:
-              # fix(scope):
-              # ------------------------------------------------------
-
-              if printf '%s\n' "$commit" |
-                grep -Eq '^fix(\([^)]*\))?:'; then
-
-                if [[ "$release_type" == "none" ]]; then
-                  release_type="patch"
-                fi
-
-                continue
-              fi
-
-            done < <(
-              git log "${latest_tag}..HEAD" \
-                --pretty=format:'%s%n%b%n---'
-            )
-
-            echo "Detected release type: ${release_type}"
-
-            # ========================================================
-            # No release required
-            # ========================================================
-
-            if [[ "$release_type" == "none" ]]; then
-
-              echo "No release required."
-
-              echo "should_release=false" >> "$GITHUB_OUTPUT"
-
-              exit 0
-            fi
-
-            # ========================================================
-            # Calculate next version
-            #
-            # major:
-            #   0.4.1 → 1.0.0
-            #
-            # minor:
-            #   0.4.1 → 0.5.0
-            #
-            # patch:
-            #   0.4.1 → 0.4.2
-            # ========================================================
-
-            case "$release_type" in
-
-              major)
-                major=$((major + 1))
-                minor=0
-                patch=0
-                ;;
-
-              minor)
-                minor=$((minor + 1))
-                patch=0
-                ;;
-
-              patch)
-                patch=$((patch + 1))
-                ;;
-
-              *)
-                echo "::error::Invalid release type: ${release_type}"
-                exit 1
-                ;;
-
-            esac
-
+            VERSION_WITHOUT_V="${LATEST_VERSION#v}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
           fi
 
-          # ==========================================================
-          # Build version
-          # ==========================================================
+          echo "Latest release tag: ${LATEST_VERSION}"
+          echo "New release tag to create: ${NEXT_VERSION}"
 
-          version="${major}.${minor}.${patch}"
-          tag="v${version}"
+          echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
-          echo
-          echo "========================================"
-          echo "Release type : ${release_type}"
-          echo "Latest tag   : ${latest_tag:-none}"
-          echo "Next version : ${version}"
-          echo "Next tag     : ${tag}"
-          echo "========================================"
+      # --------------------------------------------------------------
+      # Create GitHub Release & Push Tag
+      # --------------------------------------------------------------
 
-          # ==========================================================
-          # Prevent duplicate tag
-          # ==========================================================
-
-          if git rev-parse "$tag" >/dev/null 2>&1; then
-            echo "::error::Tag ${tag} already exists."
-            exit 1
-          fi
-
-          # ==========================================================
-          # Outputs
-          # ==========================================================
-
-          echo "should_release=true" >> "$GITHUB_OUTPUT"
-          echo "release_type=${release_type}" >> "$GITHUB_OUTPUT"
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-
-      # ==============================================================
-      # Create GitHub Release
-      # ==============================================================
-
-      - name: Create Release
-        if: steps.version.outputs.should_release == 'true'
-        uses: softprops/action-gh-release@v2
+      - name: Create Release and Push Tag
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          target_commitish: main
-          name: ${{ steps.version.outputs.tag }}
-          generate_release_notes: true
+          tag: ${{ steps.version.outputs.VERSION }}
+          name: Release ${{ steps.version.outputs.VERSION }}
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}

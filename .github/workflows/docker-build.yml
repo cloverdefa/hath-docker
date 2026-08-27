@@ -16,6 +16,10 @@ permissions:
 
 jobs:
 
+  # ================================================================
+  # TEST (PR/Push 到 test 時執行：預測下一個 Patch 版號，推送 v0.4.3-test)
+  # ================================================================
+
   test:
     name: Docker Test Build
 
@@ -44,7 +48,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 1. 取得最新正式 Tag (例如 v0.4.2)
           LATEST_VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
@@ -57,18 +60,15 @@ jobs:
             exit 1
           fi
 
-          # 2. 移除 'v' 前綴並拆解版號
           VERSION_WITHOUT_V="${LATEST_VERSION#v}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
 
-          # 3. Patch 進位 +1
           NEXT_PATCH=$((PATCH + 1))
           NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
 
           echo "Latest release version: ${LATEST_VERSION}"
           echo "Next test version: ${NEXT_VERSION}"
 
-          # 4. 輸出 v0.4.3
           echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
@@ -88,18 +88,18 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
-
           platforms: linux/amd64,linux/arm64
-
           push: true
-
           build-args: |
             IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
-
           tags: |
             cloverdefa/hath:test
             cloverdefa/hath:${{ steps.version.outputs.VERSION }}-test
 
+
+  # ================================================================
+  # RELEASE (Release workflow 完成後觸發：直接抓取剛剛建立的正式 Tag v0.4.3)
+  # ================================================================
 
   release:
     name: Docker Release Build
@@ -126,12 +126,13 @@ jobs:
 
           git fetch --tags --force
 
-      - name: Determine version
+      - name: Determine released version
         id: version
         shell: bash
         run: |
           set -euo pipefail
 
+          # 直接讀取最新剛建立的 Tag (此時已經是 v0.4.3)
           VERSION=$(
             git tag --list 'v*.*.*' |
             grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
@@ -165,14 +166,10 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
-
           platforms: linux/amd64,linux/arm64
-
           push: true
-
           build-args: |
             IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
-
           tags: |
             cloverdefa/hath:${{ steps.version.outputs.VERSION }}
             cloverdefa/hath:latest
