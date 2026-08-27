@@ -26,8 +26,9 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --json tagName \
             --jq '.tagName')
-
+      
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "url=https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag" >> "$GITHUB_OUTPUT"
 
       - name: Send Telegram notification
         uses: appleboy/telegram-action@v1.0.1
@@ -40,6 +41,6 @@ jobs:
             ${{ github.repository }}
             🏷️ 版本
             ${{ steps.release.outputs.tag }}
-
+      
             🔗 查看 Release
-            https://github.com/${{ github.repository }}/releases/latest
+            ${{ steps.release.outputs.url }}
