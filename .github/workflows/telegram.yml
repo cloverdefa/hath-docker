@@ -35,12 +35,12 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          parse_mode: html
           message: |
-            🚀 新的 Release 已建立
-            📦 儲存庫
+            🚀 <b>新的 Release 已建立</b>
+            📦 <b>儲存庫</b>
             ${{ github.repository }}
-            🏷️ 版本
+            🏷️ <b>版本</b>
             ${{ steps.release.outputs.tag }}
       
-            🔗 查看 Release
-            ${{ steps.release.outputs.url }}
+            🔗 <a href="${{ steps.release.outputs.url }}">查看 Release</a>
