@@ -14,18 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ==============================================================
-      # Checkout
-      # ==============================================================
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
-      # ==============================================================
-      # Determine version
-      # ==============================================================
 
       - name: Determine version
         id: version
@@ -35,119 +27,56 @@ jobs:
 
           git fetch --tags --force
 
-          # ==========================================================
-          # Test branch
-          # ==========================================================
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && "${GITHUB_REF_NAME}" == v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            CHANNEL="release"
 
-          if [[ "${GITHUB_EVENT_NAME}" == "push" &&
-                "${GITHUB_REF_TYPE}" == "branch" &&
-                "${GITHUB_REF_NAME}" == "test" ]]; then
-
-            LATEST_TAG=$(
+          elif [[ "${GITHUB_REF_TYPE}" == "branch" && "${GITHUB_REF_NAME}" == "test" ]]; then
+            VERSION=$(
               git tag --list 'v*.*.*' |
               grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
+              sed 's/^v//' |
               sort -V |
               tail -n 1 || true
             )
 
-            if [[ -z "$LATEST_TAG" ]]; then
-              echo "::error::No formal release version found."
+            if [ -z "$VERSION" ]; then
+              echo "::error::No release version found"
               exit 1
             fi
 
-            VERSION="${LATEST_TAG#v}"
             CHANNEL="test"
 
-          # ==========================================================
-          # GitHub Release
-          # ==========================================================
-
-          elif [[ "${GITHUB_EVENT_NAME}" == "release" &&
-                  "${GITHUB_EVENT_ACTION}" == "published" ]]; then
-
-            TAG="${{ github.event.release.tag_name }}"
-
-            if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              echo "::error::Invalid release tag: $TAG"
-              exit 1
-            fi
-
-            VERSION="${TAG#v}"
-            CHANNEL="release"
-
           else
-            echo "::error::Unexpected event."
-            echo "Event: ${GITHUB_EVENT_NAME}"
-            echo "Ref:   ${GITHUB_REF}"
+            echo "::error::Unexpected ref: ${GITHUB_REF}"
             exit 1
           fi
 
-          echo "========================================"
-          echo "Event   : ${GITHUB_EVENT_NAME}"
-          echo "Ref     : ${GITHUB_REF}"
-          echo "Version : ${VERSION}"
-          echo "Channel : ${CHANNEL}"
-          echo "========================================"
+          echo "VERSION=$VERSION"
+          echo "CHANNEL=$CHANNEL"
 
-          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "CHANNEL=${CHANNEL}" >> "$GITHUB_OUTPUT"
-
-      # ==============================================================
-      # Determine Docker image tags
-      # ==============================================================
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "CHANNEL=$CHANNEL" >> "$GITHUB_OUTPUT"
 
       - name: Determine image tags
         id: tags
         shell: bash
         run: |
-          set -euo pipefail
-
           VERSION="${{ steps.version.outputs.VERSION }}"
           CHANNEL="${{ steps.version.outputs.CHANNEL }}"
 
-          case "$CHANNEL" in
+          if [[ "$CHANNEL" == "release" ]]; then
+            TAGS="cloverdefa/hath:${VERSION}"
+            TAGS="${TAGS}"$'\n'"cloverdefa/hath:latest"
 
-            # --------------------------------------------------------
-            # Test
-            #
-            # v0.3.1
-            #
-            # =>
-            #
-            # test
-            # v0.3.1-test
-            # --------------------------------------------------------
+          elif [[ "$CHANNEL" == "test" ]]; then
+            TAGS="cloverdefa/hath:test-${VERSION}"
+            TAGS="${TAGS}"$'\n'"cloverdefa/hath:test"
 
-            test)
-              TAGS="cloverdefa/hath:test"
-              TAGS="${TAGS}"$'\n'"cloverdefa/hath:v${VERSION}-test"
-              ;;
-
-            # --------------------------------------------------------
-            # Release
-            #
-            # v0.3.1
-            #
-            # =>
-            #
-            # v0.3.1
-            # latest
-            # --------------------------------------------------------
-
-            release)
-              TAGS="cloverdefa/hath:v${VERSION}"
-              TAGS="${TAGS}"$'\n'"cloverdefa/hath:latest"
-              ;;
-
-            *)
-              echo "::error::Unknown channel: $CHANNEL"
-              exit 1
-              ;;
-
-          esac
-
-          echo "Docker image tags:"
-          echo "$TAGS"
+          else
+            echo "::error::Unknown channel: $CHANNEL"
+            exit 1
+          fi
 
           {
             echo "TAGS<<EOF"
@@ -155,23 +84,11 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      # ==============================================================
-      # Set up QEMU
-      # ==============================================================
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
-      # ==============================================================
-      # Set up Docker Buildx
-      # ==============================================================
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
-
-      # ==============================================================
-      # Login to Docker Hub
-      # ==============================================================
 
       - name: Login to Docker Hub
         uses: docker/login-action@v4
@@ -179,24 +96,15 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # ==============================================================
-      # Build and push
-      # ==============================================================
-
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
           file: ./docker/Dockerfile
-
           platforms: linux/amd64,linux/arm64
-
           push: true
-
           build-args: |
             IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
-
           tags: ${{ steps.tags.outputs.TAGS }}
-
           cache-from: type=gha
           cache-to: type=gha,mode=max
