@@ -12,6 +12,15 @@ permissions:
 
 jobs:
   release:
+    # ==============================================================
+    # Only release when:
+    #
+    #   PR closed
+    #   base  = main
+    #   head  = dev
+    #   merged = true
+    # ==============================================================
+
     if: >
       github.event.pull_request.merged == true &&
       github.event.pull_request.base.ref == 'main' &&
@@ -21,7 +30,7 @@ jobs:
 
     steps:
       # ==============================================================
-      # Checkout main
+      # Checkout merged main
       # ==============================================================
 
       - name: Checkout main
@@ -40,7 +49,24 @@ jobs:
         run: |
           set -euo pipefail
 
+          # ----------------------------------------------------------
+          # Fetch all tags
+          # ----------------------------------------------------------
+
           git fetch --tags --force
+
+          # ----------------------------------------------------------
+          # Find latest semantic version tag
+          #
+          # Example:
+          #
+          #   v0.1.0
+          #   v0.2.0
+          #   v0.2.1
+          #   v1.0.0
+          #
+          # Only valid semantic versions are considered.
+          # ----------------------------------------------------------
 
           latest_tag=$(
             git tag --list 'v*.*.*' |
@@ -49,7 +75,7 @@ jobs:
             tail -n 1 || true
           )
 
-          echo "Latest tag: ${latest_tag:-none}"
+          echo "Latest release: ${latest_tag:-none}"
 
           # ==========================================================
           # Initial release
@@ -65,6 +91,10 @@ jobs:
 
           else
 
+            # --------------------------------------------------------
+            # Parse current version
+            # --------------------------------------------------------
+
             version="${latest_tag#v}"
 
             IFS='.' read -r major minor patch <<< "$version"
@@ -72,15 +102,49 @@ jobs:
             release_type="none"
 
             echo "Analyzing commits since ${latest_tag}..."
+            echo
+
+            # ========================================================
+            # Analyze commits
+            #
+            # MAJOR:
+            #   feat!: ...
+            #   fix!: ...
+            #   refactor!: ...
+            #   BREAKING CHANGE: ...
+            #
+            # MINOR:
+            #   feat: ...
+            #
+            # PATCH:
+            #   fix: ...
+            #
+            # No release:
+            #   docs:
+            #   chore:
+            #   refactor:
+            #   test:
+            #   style:
+            #   ci:
+            # ========================================================
 
             while IFS= read -r commit; do
 
               [[ -z "$commit" ]] && continue
+              [[ "$commit" == "---" ]] && continue
 
-              echo "Commit: $commit"
+              echo "Commit:"
+              echo "$commit"
+              echo
 
               # ------------------------------------------------------
               # MAJOR
+              #
+              # Conventional Commit with !:
+              #
+              # feat!: ...
+              # fix!: ...
+              # refactor!: ...
               # ------------------------------------------------------
 
               if printf '%s\n' "$commit" |
@@ -89,6 +153,12 @@ jobs:
                 release_type="major"
                 continue
               fi
+
+              # ------------------------------------------------------
+              # MAJOR
+              #
+              # BREAKING CHANGE:
+              # ------------------------------------------------------
 
               if printf '%s\n' "$commit" |
                 grep -Eq '^BREAKING CHANGE:'; then
@@ -99,6 +169,9 @@ jobs:
 
               # ------------------------------------------------------
               # MINOR
+              #
+              # feat:
+              # feat(scope):
               # ------------------------------------------------------
 
               if printf '%s\n' "$commit" |
@@ -113,6 +186,9 @@ jobs:
 
               # ------------------------------------------------------
               # PATCH
+              #
+              # fix:
+              # fix(scope):
               # ------------------------------------------------------
 
               if printf '%s\n' "$commit" |
@@ -122,11 +198,12 @@ jobs:
                   release_type="patch"
                 fi
 
+                continue
               fi
 
             done < <(
               git log "${latest_tag}..HEAD" \
-                --pretty=format:'%s'
+                --pretty=format:'%s%n%b%n---'
             )
 
             echo "Detected release type: ${release_type}"
@@ -146,6 +223,15 @@ jobs:
 
             # ========================================================
             # Calculate next version
+            #
+            # major:
+            #   0.4.1 → 1.0.0
+            #
+            # minor:
+            #   0.4.1 → 0.5.0
+            #
+            # patch:
+            #   0.4.1 → 0.4.2
             # ========================================================
 
             case "$release_type" in
@@ -171,14 +257,23 @@ jobs:
                 ;;
 
             esac
+
           fi
+
+          # ==========================================================
+          # Build version
+          # ==========================================================
 
           version="${major}.${minor}.${patch}"
           tag="v${version}"
 
+          echo
+          echo "========================================"
           echo "Release type : ${release_type}"
+          echo "Latest tag   : ${latest_tag:-none}"
           echo "Next version : ${version}"
           echo "Next tag     : ${tag}"
+          echo "========================================"
 
           # ==========================================================
           # Prevent duplicate tag
@@ -188,6 +283,10 @@ jobs:
             echo "::error::Tag ${tag} already exists."
             exit 1
           fi
+
+          # ==========================================================
+          # Outputs
+          # ==========================================================
 
           echo "should_release=true" >> "$GITHUB_OUTPUT"
           echo "release_type=${release_type}" >> "$GITHUB_OUTPUT"
