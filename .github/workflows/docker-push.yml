@@ -3,11 +3,8 @@ name: Docker
 on:
   push:
     branches:
+      - main
       - test
-
-  release:
-    types:
-      - published
 
 permissions:
   contents: read

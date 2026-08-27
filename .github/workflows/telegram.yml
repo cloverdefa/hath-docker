@@ -26,7 +26,7 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --json tagName \
             --jq '.tagName')
-      
+
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "url=https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag" >> "$GITHUB_OUTPUT"
 
@@ -35,12 +35,14 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          parse_mode: html
           message: |
-            🚀 <b>新的 Release 已建立</b>
-            📦 <b>儲存庫</b>
+            🚀 新的 Release 已建立
+
+            📦 儲存庫
             ${{ github.repository }}
-            🏷️ <b>版本</b>
+
+            🏷️ 版本
             ${{ steps.release.outputs.tag }}
-      
-            🔗 <a href="${{ steps.release.outputs.url }}">查看 Release</a>
+
+            🔗 查看 Release
+            ${{ steps.release.outputs.url }}
