@@ -12,12 +12,19 @@ permissions:
 
 jobs:
   release:
-    name: Create GitHub Release & Tag
+    # ==============================================================
+    # 僅允許：
+    # 1. 手動觸發 (workflow_dispatch)
+    # 2. PR 被成功合併，且來源分支為 'test'、目標分支為 'main'
+    # ==============================================================
     if: >
-      github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'main' &&
-      github.event.pull_request.head.ref == 'test'
-      
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main' &&
+        github.event.pull_request.head.ref == 'test'
+      )
+
     runs-on: ubuntu-latest
 
     steps:
