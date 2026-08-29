@@ -22,7 +22,7 @@ jobs:
       (
         (
           github.event.pull_request.base.ref == 'main' &&
-          contains(fromJSON('["dev", "test"]'), github.event.pull_request.head.ref)
+          github.event.pull_request.head.ref == 'test'
         ) ||
         (
           github.event.pull_request.base.ref == 'test' &&
