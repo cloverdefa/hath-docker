@@ -19,7 +19,12 @@ LABEL maintainer="cloverdefa <jackie@dast.tw>"
 LABEL version="${IMAGE_VERSION}"
 LABEL org.opencontainers.image.source="https://github.com/cloverdefa/hath-docker"
 
-RUN addgroup -g 1000 hath && adduser -D -u 1000 -G hath hath
+#FIX: 暫時修正CVE漏洞:CVE-2026-63073，CVE-2026-14456，CVE-2026-54874，CVE-2026-18798
+#FIX: CVE-2026-63076，CVE-2026-63072，CVE-2026-14457，CVE-2026-63075，CVE-2026-63074
+#FIX: 待後續amazoncorretto:8-alpine3.24-jre修復漏洞後刪除。
+RUN apk add --no-cache --upgrade libssl3 libcrypto3 \
+    && addgroup -g 1000 hath \
+    && adduser -D -u 1000 -G hath hath
 
 WORKDIR /hath
 
