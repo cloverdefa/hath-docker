@@ -19,7 +19,7 @@ LABEL maintainer="cloverdefa <jackie@dast.tw>"
 LABEL version="${IMAGE_VERSION}"
 LABEL org.opencontainers.image.source="https://github.com/cloverdefa/hath-docker"
 
-RUN apk add --no-cache --upgrade openssl libssl3 libcrypto3 \
+RUN apk add --no-cache --upgrade libssl3 libcrypto3 \
     && addgroup -g 1000 hath \
     && adduser -D -u 1000 -G hath hath
 
