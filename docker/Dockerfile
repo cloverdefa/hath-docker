@@ -37,6 +37,10 @@ COPY --chown=hath:hath \
     --chmod=755 \
     start/run.sh /hath/
 
+COPY --chown=hath:hath \
+    --chmod=755 \
+    start/healthcheck.sh /hath/
+
 VOLUME ["/hath/cache", "/hath/data", "/hath/download", "/hath/log", "/hath/tmp"]
 
 USER hath
@@ -44,6 +48,6 @@ USER hath
 STOPSIGNAL SIGTERM
 
 HEALTHCHECK --interval=90s --timeout=30s --start-period=60s --retries=3 \
-    CMD pgrep -f "java -jar /hath/HentaiAtHome.jar" || exit 1
+    CMD /hath/healthcheck.sh
 
 CMD ["/hath/run.sh"]
