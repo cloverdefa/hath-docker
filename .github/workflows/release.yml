@@ -75,6 +75,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.version.outputs.VERSION }}
-          name: Release ${{ steps.version.outputs.VERSION }}
+          name: ${{ steps.version.outputs.VERSION }}
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
