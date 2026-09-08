@@ -89,6 +89,8 @@ jobs:
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          provenance: false
+          sbom: false
           build-args: |
             IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
           tags: |
@@ -161,6 +163,8 @@ jobs:
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          provenance: false
+          sbom: false
           build-args: |
             IMAGE_VERSION=${{ steps.version.outputs.VERSION }}
           tags: |
