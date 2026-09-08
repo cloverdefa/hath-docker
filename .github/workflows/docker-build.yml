@@ -128,15 +128,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          VERSION=$(git tag --points-at HEAD --list 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)
+          VERSION=$(
+            git tag --list 'v*.*.*' |
+            grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
+            sort -V |
+            tail -n 1 || true
+          )
 
           if [[ -z "$VERSION" ]]; then
-            echo "::notice::此 commit 沒有對應的新 release tag，略過建置。"
-            echo "SKIP=true" >> "$GITHUB_OUTPUT"
-            exit 0
+            echo "::error::No release version found."
+            exit 1
           fi
 
-          echo "SKIP=false" >> "$GITHUB_OUTPUT"
           echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
