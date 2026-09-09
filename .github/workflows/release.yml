@@ -10,34 +10,53 @@ on:
 permissions:
   contents: write
 
+
 jobs:
   release:
+
     # ==============================================================
-    # 僅允許：
-    # 1. 手動觸發 (workflow_dispatch)
-    # 2. PR 被成功合併，且來源分支為 'test'、目標分支為 'main'
+    # Only allow:
+    #
+    # Successfully merged PR:
+    #   test → main
     # ==============================================================
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event.pull_request.merged == true &&
-        github.event.pull_request.base.ref == 'main' &&
-        github.event.pull_request.head.ref == 'test'
-      )
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.ref == 'test'
 
     runs-on: ubuntu-latest
 
     steps:
+
+      # ============================================================
+      # Checkout
+      #
+      # checkout will point to the PR merge commit automatically
+      # for pull_request events.
+      # ============================================================
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
+
+      # ============================================================
+      # Fetch tags
+      # ============================================================
+
       - name: Fetch tags
         shell: bash
         run: |
           set -euo pipefail
+
           git fetch --tags --force
+
+
+      # ============================================================
+      # Determine next version
+      # ============================================================
 
       - name: Determine next version
         id: version
@@ -45,36 +64,311 @@ jobs:
         run: |
           set -euo pipefail
 
-          LATEST_VERSION=$(
+
+          # ==========================================================
+          # Functions
+          # ==========================================================
+
+          get_latest_tag() {
             git tag --list 'v*.*.*' |
-            grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
-            sort -V |
-            tail -n 1 || true
-          )
+              grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
+              sort -V |
+              tail -n 1 ||
+              true
+          }
 
-          if [[ -z "$LATEST_VERSION" ]]; then
-            NEXT_VERSION="v0.1.0"
-          else
-            VERSION_WITHOUT_V="${LATEST_VERSION#v}"
-            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
 
-            COMMITS=$(git log "${LATEST_VERSION}..HEAD" --oneline || true)
+          get_commit_bump() {
+            local sha="$1"
+            local subject
+            local body
 
-            if echo "$COMMITS" | grep -iE '^(.*: )?(feat|feat\(.*\))|BREAKING CHANGE' > /dev/null; then
-              NEXT_MINOR=$((MINOR + 1))
-              NEXT_VERSION="v${MAJOR}.${NEXT_MINOR}.0"
-            else
-              NEXT_PATCH=$((PATCH + 1))
-              NEXT_VERSION="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
+            subject="$(git show -s --format='%s' "$sha")"
+            body="$(git show -s --format='%b' "$sha")"
+
+            echo ""
+            echo "----------------------------------------"
+            echo "Commit : $sha"
+            echo "Subject: $subject"
+
+
+            # ======================================================
+            # MINOR
+            #
+            # feat:
+            # feat(scope):
+            #
+            # BREAKING CHANGE:
+            #
+            # Current release policy:
+            #   feat / BREAKING CHANGE → minor
+            # ======================================================
+
+            if printf '%s\n' "$subject" |
+              grep -Eq '^feat(\([^)]*\))?:'; then
+
+              echo "Detected: MINOR"
+              echo "minor"
+              return
             fi
+
+
+            if printf '%s\n' "$body" |
+              grep -Eq '^BREAKING CHANGE:'; then
+
+              echo "Detected: MINOR"
+              echo "minor"
+              return
+            fi
+
+
+            # ======================================================
+            # PATCH
+            #
+            # Everything else triggers patch.
+            #
+            # This includes:
+            #   fix
+            #   chore
+            #   docs
+            #   refactor
+            #   style
+            #   test
+            #   ci
+            #   build
+            #   perf
+            #   etc.
+            #
+            # This preserves the behavior of the current workflow.
+            # ======================================================
+
+            echo "Detected: PATCH"
+            echo "patch"
+          }
+
+
+          get_release_bump() {
+            local commit_range="$1"
+            local release_type="patch"
+            local commit_bump
+            local sha
+
+
+            # ------------------------------------------------------
+            # Get individual commit SHA.
+            #
+            # Every line is exactly one commit.
+            # No multi-line commit-message parsing required.
+            # ------------------------------------------------------
+
+            while IFS= read -r sha; do
+
+              [[ -z "$sha" ]] && continue
+
+
+              commit_bump="$(get_commit_bump "$sha" | tail -n 1)"
+
+
+              # ----------------------------------------------------
+              # MINOR has higher priority than PATCH.
+              # ----------------------------------------------------
+
+              if [[ "$commit_bump" == "minor" ]]; then
+                release_type="minor"
+                break
+              fi
+
+            done < <(git rev-list "$commit_range")
+
+
+            echo ""
+            echo "Detected release type: $release_type"
+
+            echo "$release_type"
+          }
+
+
+          calculate_next_version() {
+            local latest_tag="$1"
+            local release_type="$2"
+
+
+            # ------------------------------------------------------
+            # First release
+            # ------------------------------------------------------
+
+            if [[ -z "$latest_tag" ]]; then
+              echo "v0.1.0"
+              return
+            fi
+
+
+            # ------------------------------------------------------
+            # Parse latest version
+            # ------------------------------------------------------
+
+            local version="${latest_tag#v}"
+
+            local major
+            local minor
+            local patch
+
+            IFS='.' read -r major minor patch <<< "$version"
+
+
+            # ------------------------------------------------------
+            # Apply version bump
+            # ------------------------------------------------------
+
+            case "$release_type" in
+
+              minor)
+                minor=$((minor + 1))
+                patch=0
+                ;;
+
+              patch)
+                patch=$((patch + 1))
+                ;;
+
+              *)
+                echo "::error::Invalid release type: $release_type"
+                exit 1
+                ;;
+
+            esac
+
+
+            echo "v${major}.${minor}.${patch}"
+          }
+
+
+          # ==========================================================
+          # Find latest release tag
+          # ==========================================================
+
+          LATEST_TAG="$(get_latest_tag)"
+
+
+          if [[ -n "$LATEST_TAG" ]]; then
+            echo "Latest tag: $LATEST_TAG"
+          else
+            echo "Latest tag: none"
           fi
 
-          echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Create Release and Push Tag
+          # ==========================================================
+          # Determine commit range
+          # ==========================================================
+
+          TARGET_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+
+
+          if [[ -n "$LATEST_TAG" ]]; then
+            COMMIT_RANGE="${LATEST_TAG}..${TARGET_SHA}"
+          else
+            COMMIT_RANGE="$TARGET_SHA"
+          fi
+
+
+          echo "Target commit: $TARGET_SHA"
+          echo "Commit range: $COMMIT_RANGE"
+
+
+          # ==========================================================
+          # Determine release type
+          # ==========================================================
+
+          RELEASE_TYPE="$(get_release_bump "$COMMIT_RANGE" | tail -n 1)"
+
+
+          # ==========================================================
+          # Calculate next version
+          # ==========================================================
+
+          NEXT_VERSION="$(
+            calculate_next_version \
+              "$LATEST_TAG" \
+              "$RELEASE_TYPE"
+          )"
+
+
+          # ==========================================================
+          # Validate generated version
+          # ==========================================================
+
+          if ! printf '%s\n' "$NEXT_VERSION" |
+            grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+
+            echo "::error::Invalid generated version: $NEXT_VERSION"
+            exit 1
+          fi
+
+
+          # ==========================================================
+          # Prevent duplicate local tag
+          # ==========================================================
+
+          if git tag --list "$NEXT_VERSION" |
+            grep -Fxq "$NEXT_VERSION"; then
+
+            echo "::error::Tag $NEXT_VERSION already exists locally."
+            exit 1
+          fi
+
+
+          # ==========================================================
+          # Prevent duplicate remote tag
+          # ==========================================================
+
+          if git ls-remote \
+            --tags \
+            origin \
+            "refs/tags/$NEXT_VERSION" |
+            grep -q "refs/tags/$NEXT_VERSION"; then
+
+            echo "::error::Tag $NEXT_VERSION already exists on origin."
+            exit 1
+          fi
+
+
+          # ==========================================================
+          # Display release information
+          # ==========================================================
+
+          echo ""
+          echo "========================================"
+          echo "Release information"
+          echo "========================================"
+          echo "Latest tag : ${LATEST_TAG:-none}"
+          echo "Release    : $RELEASE_TYPE"
+          echo "Version    : ${NEXT_VERSION#v}"
+          echo "Tag        : $NEXT_VERSION"
+          echo "Commit     : $TARGET_SHA"
+          echo "========================================"
+
+
+          # ==========================================================
+          # GitHub Actions outputs
+          # ==========================================================
+
+          {
+            echo "release_type=$RELEASE_TYPE"
+            echo "version=${NEXT_VERSION#v}"
+            echo "tag=$NEXT_VERSION"
+            echo "target_sha=$TARGET_SHA"
+          } >> "$GITHUB_OUTPUT"
+
+
+      # ============================================================
+      # Create GitHub Release and push tag
+      # ============================================================
+
+      - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.version.outputs.VERSION }}
-          name: ${{ steps.version.outputs.VERSION }}
+          tag: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          commit: ${{ steps.version.outputs.target_sha }}
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
