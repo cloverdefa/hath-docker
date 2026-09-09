@@ -10,9 +10,12 @@ on:
 permissions:
   contents: write
 
-
 jobs:
-  release:
+  # ==================================================================
+  # Job 1: Determine release version
+  # ==================================================================
+  version:
+    name: Determine Version
 
     # ==============================================================
     # Only allow:
@@ -26,6 +29,12 @@ jobs:
       github.event.pull_request.head.ref == 'test'
 
     runs-on: ubuntu-latest
+
+    outputs:
+      release_type: ${{ steps.version.outputs.release_type }}
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      target_sha: ${{ steps.version.outputs.target_sha }}
 
     steps:
 
@@ -359,6 +368,17 @@ jobs:
             echo "target_sha=$TARGET_SHA"
           } >> "$GITHUB_OUTPUT"
 
+  # ==================================================================
+  # Job 2: Create GitHub Release
+  # ==================================================================
+  release:
+    name: Create Release
+
+    needs: version
+
+    runs-on: ubuntu-latest
+
+    steps:
 
       # ============================================================
       # Create GitHub Release and push tag
@@ -367,8 +387,8 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.tag }}
-          commit: ${{ steps.version.outputs.target_sha }}
+          tag: ${{ needs.version.outputs.tag }}
+          name: ${{ needs.version.outputs.tag }}
+          commit: ${{ needs.version.outputs.target_sha }}
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
