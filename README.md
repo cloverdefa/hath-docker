@@ -1,118 +1,105 @@
 # hath-docker
-hath-docker
-在Docker容器中執行H@H客戶端
 
-H@H客戶端版本 : 1.6.5
+以 Docker 執行 [Hentai@Home (H@H)](https://hentaiathome.net/) 客戶端。映像會從官方來源取得 H@H Java 客戶端，並以 Java 8 執行。H@H 客戶端版本目前由 `docker/Dockerfile` 中的 `HATH_VERSION` 指定。
 
-### Usage
+## 快速開始（Docker Compose）
 
-使用docker來運作容器:
-```
-docker run \
-  --name hath \
-  --net host \
-  --user 1000:1000 \
-  -v /本地cache路徑:/hath/cache \
-  -v /本地data路徑:/hath/data \
-  -v /本地download路徑:/hath/download \
-  -v /本地log路徑:/hath/log \
-  -v /本地tmp路徑:/hath/tmp \
-  -e HATH_CLIENT_ID=輸入你的HATH_ID \
-  -e HATH_CLIENT_KEY=輸入你的HATH_KEY \
-  -e UMASK=027 \
-  cloverdefa/hath:latest
-```
+編輯 `example/.env`，填入 H@H 帳號資料。請勿提交含有真實憑證的檔案，並限制檔案權限：
 
-使用docker-compose來運作容器:
-
-### compose.yaml範例
-```
----
-services:
-  hath:
-    container_name: "hath"
-    image: "cloverdefa/hath:latest"
-    restart: "unless-stopped"
-    ports:
-      - "12345:12345" # 修改為HATH設定PORT
-    user: "1000:1000" # 請以機器當下的UID:GID值取代
-    volumes:
-      - "./cache:/hath/cache"
-      - "./data:/hath/data"
-      - "./download:/hath/download"
-      - "./log:/hath/log"
-      - "./tmp:/hath/tmp"
-    environment:
-      # 編輯同路徑資料夾下的.env檔案來設定ID及KEY
-      HATH_CLIENT_ID: "${HATH_CLIENT_ID}"
-      HATH_CLIENT_KEY: "${HATH_CLIENT_KEY}"
-      UMASK: "027"
-      TZ: "Asia/Taipei" # 設定主機所在時區
-    env_file: "./.env"
-```
-
-建立.env檔案存放ID及KEY
-
-### .env(範例)
-```
-HATH_CLIENT_ID=ID       # 修改ID為你的 H@H client id
-HATH_CLIENT_KEY=KEY     # 修改KEY為你的 H@H client key
-```
-
-變更.env檔案權限
-```
+```sh
+cd example
 chmod 600 .env
 ```
 
-## 執行身份（UID/GID）說明
+接著建立資料目錄並設定其擁有者，然後啟動：
 
-容器內建有一個 `hath`（uid/gid 1000）使用者，Dockerfile 預設以此身份執行。
-
-**但透過 docker-compose 啟動時，`compose.yaml` 內的 `user: "1000:1000"` 會覆蓋這個預設值**，
-實際執行身份直接由這個欄位的值決定，與 image 內建的 `hath` 使用者無關（即使數值相同）。
-
-- **設定為 `1000:1000`**：等同於使用 image 內建的 `hath`。
-- **設定其他 UID/GID**（例如對齊 host 上某個既有使用者）：容器內程式會以該身份執行，
-  此時**掛載到容器的 volume 目錄擁有者也必須是同一組 UID/GID**（詳見下方「Volume 目錄權限」章節），
-  否則會遇到 `Permission denied`。
-
-若不透過 docker-compose、改用 `docker run` 且未加 `--user` 參數，才會真正使用 image 內建的 `hath`。
-
-若需要在不同機器上部署且 UID/GID 不同，建議直接修改 `compose.yaml` 內的 `user` 欄位。
-
-## Volume 目錄權限
-
-`compose.yaml` 範例使用 bind mount（如 `./cache:/hath/cache`）將 host 端目錄
-掛載進容器。這些目錄的實際存取權限**取決於 host 端目錄本身的擁有者**，與容器內部設定無關。
-
-啟動前請確保 host 端目錄的擁有者，與 `compose.yaml` 內 `user`（UID:GID）一致，例如：
-
-```bash
+```sh
 mkdir -p cache data download log tmp
-sudo chown -R 1000:1000 cache data download log tmp
+sudo chown -R "$(id -u):$(id -g)" cache data download log tmp
+docker compose up -d
 ```
 
-若擁有者不一致，容器會因為沒有寫入權限而無法啟動，`run.sh` 啟動時會印出對應錯誤提示。
+範例 Compose 會將容器的 `12345` port 映射到主機，並把 cache、data、download、log、tmp 保存在 `example` 目錄。請依 H@H 客戶端設定調整 `compose.yaml` 的 port 映射。
 
-## Docker Hub
-https://hub.docker.com/r/cloverdefa/hath
+查看狀態及日誌：
+
+```sh
+docker compose ps
+docker compose logs -f hath
+```
+
+停止服務：
+
+```sh
+docker compose down
+```
+
+## 使用 Docker CLI
+
+```sh
+docker run -d \
+  --name hath \
+  --restart unless-stopped \
+  -p 12345:12345 \
+  --user "$(id -u):$(id -g)" \
+  -v ./cache:/hath/cache \
+  -v ./data:/hath/data \
+  -v ./download:/hath/download \
+  -v ./log:/hath/log \
+  -v ./tmp:/hath/tmp \
+  -e HATH_CLIENT_ID='你的 H@H client id' \
+  -e HATH_CLIENT_KEY='你的 H@H client key' \
+  -e UMASK=077 \
+  -e TZ=Asia/Taipei \
+  cloverdefa/hath:latest
+```
+
+執行前請先建立掛載目錄，並確保其擁有者與 `--user` 指定的 UID/GID 相同。若需使用 image 內建的 `hath` 帳號（UID/GID 1000），可省略 `--user`，並將目錄擁有者設為 `1000:1000`。
+
+## 設定
+
+| 環境變數 | 必要 | 說明 |
+| --- | --- | --- |
+| `HATH_CLIENT_ID` | 是 | H@H client ID。首次啟動時與 KEY 一起寫入 `/hath/data/client_login`。 |
+| `HATH_CLIENT_KEY` | 是 | H@H client key。首次啟動後，修改環境變數不會覆寫既有的 `client_login`。 |
+| `UMASK` | 否 | 建立檔案時使用的 umask；預設不額外設定。接受 1 至 4 位八進位數字，例如 `077`。 |
+| `TZ` | 否 | 時區；範例使用 `Asia/Taipei`。 |
+| `PROXY_HOST` | 否 | 傳給 H@H 的 image proxy 主機。 |
+| `PROXY_TYPE` | 否 | 傳給 H@H 的 image proxy 類型。 |
+| `PROXY_PORT` | 否 | 傳給 H@H 的 image proxy port。 |
+| `JAVA_OPTS` | 否 | 傳給 Java 的額外啟動選項，例如 `-Xms256m -Xmx1g`。 |
+
+`PROXY_*` 只有在有設定時才會傳入客戶端。若要變更 H@H 監聽 port，請依 H@H 客戶端支援的設定調整其設定檔及 Docker port 映射，兩者需一致。
+
+## 身份與目錄權限
+
+映像內建 `hath` 使用者，UID/GID 為 `1000:1000`。Docker Compose 範例指定 `user: "1000:1000"`；若要使用其他 UID/GID，請修改 `user`，並讓所有 bind mount 目錄由相同 UID/GID 擁有。否則容器可能因無法寫入而停止，啟動腳本會指出發生問題的目錄。
+
+容器使用以下持久化目錄：
+
+| 容器路徑 | 用途 |
+| --- | --- |
+| `/hath/cache` | H@H 快取 |
+| `/hath/data` | H@H 資料及 `client_login` 憑證檔 |
+| `/hath/download` | 下載資料 |
+| `/hath/log` | 日誌 |
+| `/hath/tmp` | 暫存檔 |
+
+請保留 `/hath/data`，否則重建容器後需要重新初始化登入資料。`client_login` 會以權限 `600` 建立。
+
+## Health check
+
+Docker health check 每 90 秒檢查 H@H Java 程序及容器內是否有 TCP port 在監聽；啟動寬限時間為 60 秒，連續 3 次失敗後標記為 unhealthy。
+
+## 映像與原始碼
+
+- Docker Hub：<https://hub.docker.com/r/cloverdefa/hath>
+- 原始碼：<https://github.com/cloverdefa/hath-docker>
 
 ## 貢獻
-歡迎提交 Issue 或 Pull Request！請遵循以下步驟：
 
-1. Fork 此專案。
-2. 建立一個新分支：
-   ```
-   git checkout -b feature/你的功能名稱
-   ```
-3. 提交更改並推送到你的分支：
-   ```
-   git commit -m "說明你的修改內容"
-   git push origin feature/你的功能名稱
-   ```
-4. 至 GitHub 發送 Pull Request。
+歡迎提交 Issue 或 Pull Request。請先 fork 專案、建立分支、提交變更，再向 GitHub 發送 Pull Request。
 
 ## 授權
-此專案基於 MIT 授權條款，詳見 [MIT License](https://github.com/cloverdefa/hath-docker/blob/main/LICENSE.md) 授權條款。
 
-
+本專案採用 MIT License，詳見 [LICENSE.md](LICENSE.md)。
