@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b35"/><stop offset="1" stop-color="#172c4a"/></linearGradient>
+ <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#67f0dc"/><stop offset="1" stop-color="#16b8c6"/></linearGradient>
+ <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7bb8ff"/><stop offset="1" stop-color="#4278e8"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#050b18" flood-opacity=".38"/></filter>
+</defs>
+<rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+<circle cx="512" cy="440" r="302" fill="#203b5a" opacity=".42"/>
+<!-- subtle network ring -->
+<circle cx="512" cy="430" r="250" fill="none" stroke="#4a7295" stroke-width="5" stroke-dasharray="8 24" opacity=".55"/>
+<!-- house roof / home identity -->
+<path d="M300 382 L512 220 L724 382" fill="none" stroke="#e2f5ff" stroke-width="27" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>
+<!-- container body -->
+<g filter="url(#shadow)">
+ <path d="M300 414 L512 500 L724 414 L724 598 L512 690 L300 598 Z" fill="url(#blue)"/>
+ <path d="M300 414 L512 500 L512 690 L300 598 Z" fill="#3c6fd2"/>
+ <path d="M512 500 L724 414 L724 598 L512 690 Z" fill="url(#cyan)"/>
+ <!-- container seams -->
+ <path d="M348 433 L348 618 M399 454 L399 640 M452 475 L452 664" stroke="#c7f6ff" stroke-width="12" opacity=".8"/>
+ <path d="M566 478 L566 666 M618 457 L618 643 M670 436 L670 620" stroke="#e4fffb" stroke-width="12" opacity=".8"/>
+</g>
+<!-- connected client nodes -->
+<g stroke="#9df7e8" stroke-width="10" stroke-linecap="round" fill="none" opacity=".95">
+ <path d="M512 690 L512 742 L380 790"/><path d="M512 742 L644 790"/>
+</g>
+<circle cx="380" cy="790" r="18" fill="#67f0dc"/><circle cx="644" cy="790" r="18" fill="#7bb8ff"/>
+<!-- H@H monogram -->
+<text x="512" y="858" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="800" text-anchor="middle" letter-spacing="5" fill="#f2fbff">H@H</text>
+<text x="512" y="910" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" text-anchor="middle" letter-spacing="8" fill="#80d8e4">DOCKER CLIENT</text>
+</svg>
