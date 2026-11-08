@@ -11,7 +11,7 @@ RUN apk add --no-cache wget unzip \
 
 
 # 第二階段
-FROM amazoncorretto:8-alpine3.24-jre
+FROM amazoncorretto:8u512-alpine3.24-jre
 
 ARG IMAGE_VERSION
 
