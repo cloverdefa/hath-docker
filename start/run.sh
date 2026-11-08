@@ -52,7 +52,7 @@ set --
 [ -n "${PROXY_TYPE:-}" ] && set -- "$@" "--image-proxy-type=$PROXY_TYPE"
 [ -n "${PROXY_PORT:-}" ] && set -- "$@" "--image-proxy-port=$PROXY_PORT"
 
-exec java ${JAVA_OPTS:-} -jar "/hath/HentaiAtHome.jar" \
+exec java -jar "/hath/HentaiAtHome.jar" \
   "$@" \
   --cache-dir="/hath/cache" \
   --data-dir="/hath/data" \
